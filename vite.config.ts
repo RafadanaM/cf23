@@ -22,7 +22,8 @@ const config = defineConfig(() => ({
       prerender: {
         enabled: true,
         crawlLinks: true,
-        autoStaticPathsDiscovery: true
+        autoStaticPathsDiscovery: true,
+        failOnError: true
       }
     }),
     isProd ? nitro({ preset: 'bun' }) : undefined,
