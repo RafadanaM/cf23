@@ -51,7 +51,8 @@ jobs:
           username: ${{ secrets.HOST_USER }}
           key: ${{ secrets.HOST_SSH_KEY }}
           script: |
-            sudo cp /home/${{ secrets.HOST_USER }}/apps/cf23/cf23.rafadana.com.conf /etc/nginx/conf.d/cf23.rafadana.com.conf
+            set -e
+            sudo cp /home/${{ secrets.HOST_USER }}/apps/cf23/cf23.rafadana.com.conf /etc/nginx/conf.d/
             sudo nginx -t
             sudo systemctl reload nginx
 
