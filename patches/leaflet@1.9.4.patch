@@ -1,0 +1,31 @@
+diff --git a/dist/leaflet-src.js b/dist/leaflet-src.js
+index 90f6db30412aa1219cba21fccd00644b994a51c8..1f03e75d4dec1432a568b4321eea9eab77fed401 100644
+--- a/dist/leaflet-src.js
++++ b/dist/leaflet-src.js
+@@ -2430,6 +2430,8 @@
+   // @function addClass(el: HTMLElement, name: String)
+   // Adds `name` to the element's class attribute.
+   function addClass(el, name) {
++    if (name === "leaflet-dragging") return;
++
+   	if (el.classList !== undefined) {
+   		var classes = splitWords(name);
+   		for (var i = 0, len = classes.length; i < len; i++) {
+@@ -2444,6 +2446,8 @@
+   // @function removeClass(el: HTMLElement, name: String)
+   // Removes `name` from the element's class attribute.
+   function removeClass(el, name) {
++    if (name === "leaflet-dragging") return;
++
+   	if (el.classList !== undefined) {
+   		el.classList.remove(name);
+   	} else {
+@@ -10725,7 +10729,7 @@
+ 
+   	_initLayout: function () {
+   		var prefix = 'leaflet-tooltip',
+-  		    className = prefix + ' ' + (this.options.className || '') + ' leaflet-zoom-' + (this._zoomAnimated ? 'animated' : 'hide');
++  		    className = prefix + ' ' + 'leaflet-zoom-' + (this._zoomAnimated ? 'animated' : 'hide') + ' ' + (this.options.className || '');
+ 
+   		this._contentNode = this._container = create$1('div', className);
+ 
