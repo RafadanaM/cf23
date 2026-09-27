@@ -24,6 +24,10 @@ const config = defineConfig(() => ({
         crawlLinks: true,
         autoStaticPathsDiscovery: true,
         failOnError: true
+      },
+      sitemap: {
+        enabled: true,
+        host: 'https://cf23.rafadana.com'
       }
     }),
     isProd ? nitro({ preset: 'bun' }) : undefined,
