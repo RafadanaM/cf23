@@ -78,7 +78,7 @@ function CircleProvider({ children }: PropsWithChildren<{}>) {
       }
     });
 
-    searchableCircleList.push('bad apple');
+    searchableCircleList.push('bad apple touhou');
 
     return {
       circleLookUp: map,
