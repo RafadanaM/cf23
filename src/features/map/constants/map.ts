@@ -7,6 +7,8 @@ export const bounds: L.LatLngBoundsExpression = [
   [MAP_HEIGHT, MAP_WIDTH]
 ];
 
+export const center: L.LatLngExpression = [MAP_HEIGHT / 2, MAP_WIDTH / 2];
+
 export const MAP_BOTTOM_LEFT_COORD = {
   lat: '-6.300924467583374',
   lng: '106.63592650299489'

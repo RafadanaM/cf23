@@ -1,7 +1,8 @@
-import { Activity, memo, useDeferredValue } from 'react';
+import { Activity, memo, useDeferredValue, useEffect, useState } from 'react';
 
 import { useCircle } from '@/domain/circle/contexts/CircleProvider';
 
+import { interactionResponse } from '@/core/utils/scheduler';
 import { useCircleFilter } from '../contexts/CircleFilterProvider';
 import CircleBoothLabels from './CircleBoothLabels';
 import CircleBooths from './CircleBooths';
@@ -11,7 +12,6 @@ function CircleMap() {
   return (
     <>
       <BothDaysCircleBooths />
-      <BothDaysCircleBoothsLables />
       <EitherDaysCircles />
     </>
   );
@@ -26,12 +26,10 @@ function EitherDaysCircles() {
     <>
       <Activity mode={attendingDay === 'SAT' ? 'visible' : 'hidden'}>
         <DayOneCircleBooths />
-        <DayOneCircleBoothLabels />
       </Activity>
 
       <Activity mode={attendingDay === 'SUN' ? 'visible' : 'hidden'}>
         <DayTwoCircleBooths />
-        <DayTwoCircleBoothLabels />
       </Activity>
     </>
   );
@@ -39,47 +37,64 @@ function EitherDaysCircles() {
 
 const BothDaysCircleBooths = memo(() => {
   const { bothDaysCircles } = useCircle();
-  const deferredCircles = useDeferredValue(bothDaysCircles);
 
-  return <CircleBooths circles={deferredCircles} />;
-});
+  const renderedCount = useChunkRenderItems(bothDaysCircles);
+  const chunkedCircles = useDeferredValue(bothDaysCircles.slice(0, renderedCount));
 
-const BothDaysCircleBoothsLables = memo(() => {
-  const { bothDaysCircles } = useCircle();
-
-  const deferredCircles = useDeferredValue(bothDaysCircles);
-
-  return <CircleBoothLabels circles={deferredCircles} />;
+  return (
+    <>
+      <CircleBooths circles={chunkedCircles} />
+      <CircleBoothLabels circles={chunkedCircles} />
+    </>
+  );
 });
 
 const DayOneCircleBooths = memo(() => {
   const { dayOneCircles } = useCircle();
 
-  const deferredCircles = useDeferredValue(dayOneCircles);
+  const renderedCount = useChunkRenderItems(dayOneCircles, 20);
+  const chunkedCircles = useDeferredValue(dayOneCircles.slice(0, renderedCount));
 
-  return <CircleBooths circles={deferredCircles} />;
+  return (
+    <>
+      <CircleBooths circles={chunkedCircles} />
+      <CircleBoothLabels circles={chunkedCircles} />
+    </>
+  );
 });
 
 const DayTwoCircleBooths = memo(() => {
   const { dayTwoCircles } = useCircle();
 
-  const deferredCircles = useDeferredValue(dayTwoCircles);
+  const renderedCount = useChunkRenderItems(dayTwoCircles, 20);
+  const chunkedCircles = useDeferredValue(dayTwoCircles.slice(0, renderedCount));
 
-  return <CircleBooths circles={deferredCircles} />;
+  return (
+    <>
+      <CircleBooths circles={chunkedCircles} />
+      <CircleBoothLabels circles={chunkedCircles} />
+    </>
+  );
 });
 
-const DayOneCircleBoothLabels = memo(() => {
-  const { dayOneCircles } = useCircle();
+function useChunkRenderItems<T>(items: T[], chunkSize = 150) {
+  const [renderedCount, setRenderedCount] = useState(0);
 
-  const deferredCircles = useDeferredValue(dayOneCircles);
+  useEffect(() => {
+    let currentCount = 0;
 
-  return <CircleBoothLabels circles={deferredCircles} />;
-});
+    const batchCount = Math.ceil(items.length / chunkSize);
 
-const DayTwoCircleBoothLabels = memo(() => {
-  const { dayTwoCircles } = useCircle();
+    async function processBatch() {
+      for (let i = 0; i < batchCount; i++) {
+        currentCount = Math.min(currentCount + chunkSize, items.length);
+        setRenderedCount(currentCount);
+        await interactionResponse();
+      }
+    }
 
-  const deferredCircles = useDeferredValue(dayTwoCircles);
+    processBatch();
+  }, [chunkSize, items.length]);
 
-  return <CircleBoothLabels circles={deferredCircles} />;
-});
+  return renderedCount;
+}
