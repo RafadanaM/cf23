@@ -1,14 +1,22 @@
+import { RiCloseCircleLine } from '@remixicon/react';
 import L from 'leaflet';
-import { memo } from 'react';
+import { lazy, memo, Suspense, useCallback, useEffect, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { ImageOverlay } from 'react-leaflet/ImageOverlay';
 import { MapContainer } from 'react-leaflet/MapContainer';
 import { Pane } from 'react-leaflet/Pane';
 
+import { Button } from '@/core/ui/components/button';
+import { BAD_APPLE_ID } from '@/domain/circle/constants';
+
 import { bounds } from '../constants/map';
+import { useActiveCircle, useActiveCircleAction } from '../contexts/ActiveCircleProvider';
 import { useMapRegistry } from '../contexts/MapProvider';
 import ActiveCircleBooth from './ActiveCircleBooth';
 import BookmarkedCircleBooths from './BookmarkedCircleBooths';
 import CircleBoothMap from './CircleBoothMap';
+
+const BadApple = lazy(() => import('./BadApple'));
 
 const renderer = L.canvas({ padding: 0.5 });
 export const crs = L.extend({}, L.CRS.Simple, {
@@ -47,11 +55,10 @@ function ExpoMap() {
             />
             <Pane name="bookmarks" className="pointer-events-none" />
             <Pane name="active" className="pointer-events-none" />
-
+            <BadAppleContainer />
             <CircleBoothMap />
             <BookmarkedCircleBooths />
             <ActiveCircleBooth />
-            {/* <BadApple /> */}
           </MapContainer>
         </div>
       </div>
@@ -61,60 +68,41 @@ function ExpoMap() {
 
 export default memo(ExpoMap);
 
-// function BadApple() {
-//   const { map } = useMapRegistry();
-//
-//   useEffect(() => {
-//     if (!map.current) return;
-//
-//     const rectangle = L.rectangle(
-//       [
-//         [MAP_HEIGHT / 2, MAP_WIDTH / 2],
-//         [MAP_HEIGHT / 2 + 50, MAP_WIDTH / 2 + 50]
-//       ],
-//       {
-//         fillColor: '#000000',
-//         color: '#000000',
-//         fillOpacity: 1,
-//         pane: 'active'
-//       }
-//     ).addTo(map.current);
-//
-//     const FPS = 24;
-//     // 33.3ms
-//     const frameInterval = 1000 / FPS;
-//
-//     let lastFrameFiredTime = performance.now();
-//     let rafId: ReturnType<typeof requestAnimationFrame>;
-//     let isBlack = true;
-//     function animate(currentTime: number) {
-//       rafId = requestAnimationFrame(animate);
-//
-//       const elapsed = currentTime - lastFrameFiredTime;
-//
-//       if (elapsed >= frameInterval) {
-//         console.log('frame, current: ', isBlack);
-//         rectangle.setStyle({
-//           fillColor: isBlack ? '#FFF' : '#000',
-//           color: isBlack ? '#FFF' : '#000'
-//         });
-//         isBlack = !isBlack;
-//         lastFrameFiredTime += frameInterval;
-//
-//         if (currentTime - lastFrameFiredTime > frameInterval * 2) {
-//           lastFrameFiredTime = currentTime;
-//         }
-//
-//         // lastFrameFiredTime = currentTime - (elapsed % frameInterval);
-//       }
-//     }
-//
-//     rafId = requestAnimationFrame(animate);
-//
-//     return () => {
-//       cancelAnimationFrame(rafId);
-//     };
-//   }, [map]);
-//
-//   return null;
-// }
+function BadAppleContainer() {
+  const { activeCircleId } = useActiveCircle();
+  const { setActiveCircleId } = useActiveCircleAction();
+
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (activeCircleId === BAD_APPLE_ID) {
+      setShow(true);
+    }
+  }, [activeCircleId]);
+
+  const handleEnd = useCallback(() => {
+    setShow(false);
+    setActiveCircleId('');
+  }, [setActiveCircleId]);
+
+  if (!show) return null;
+
+  return (
+    <>
+      <ErrorBoundary fallback={null}>
+        <Suspense>
+          <BadApple onEnd={handleEnd} />
+        </Suspense>
+      </ErrorBoundary>
+
+      <Button
+        variant={'destructive'}
+        size={'icon-lg'}
+        className="z-400 fixed bottom-40 left-1/2 -translate-x-1/2 rounded-full"
+        onClick={handleEnd}
+      >
+        <RiCloseCircleLine className="size-6" />
+      </Button>
+    </>
+  );
+}

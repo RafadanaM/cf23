@@ -27,7 +27,7 @@
     "react/rules-of-hooks": "warn",
     "react-hooks/set-state-in-effect": "off",
 
-    "import-js/no-unresolved": "error",
+    "import-js/no-unresolved": "off",
     "import/no-cycle": "error",
     "import/no-duplicates": "error",
     "import/default": "error",

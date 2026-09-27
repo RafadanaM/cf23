@@ -7,6 +7,8 @@ import { cn } from '@/core/ui/utils';
 import { useCircle } from '@/domain/circle/contexts/CircleProvider';
 import { Circle } from '@/domain/circle/types';
 
+import { BAD_APPLE_ID } from '@/domain/circle/constants';
+import { MAP_HEIGHT, MAP_WIDTH } from '@/features/map/constants/map';
 import CircleCard from './CircleCard';
 
 interface SearchResultProps {
@@ -23,10 +25,42 @@ function SearchResult({ keyword, isLoading }: SearchResultProps) {
 
   const deferredKeyword = useDeferredValue(keyword);
 
+  const circlesInitialResult: Circle[] = useMemo(
+    () => [
+      ...circles,
+      {
+        code: 'Gensokyo',
+        attendingDays: ['SAT', 'SUN'],
+        circleType: 'BOOTH_B',
+        displayConfig: {
+          backgroundColor: '',
+          backgroundColorHover: '',
+          borderColor: ''
+        },
+        fandoms: ['Touhou', 'Bad Apple', 'Zun'],
+        id: BAD_APPLE_ID,
+        imageUrl: '/bad_apple.webp',
+        name: 'Bad Apple??',
+        rating: 'PG',
+        sampleWorks: [],
+        socialMedias: [],
+        workTypes: ['Bad Apple'],
+        rect: {
+          height: 0,
+          width: 0,
+          type: 'VERTICAL',
+          x: MAP_WIDTH / 2,
+          y: MAP_HEIGHT / 2
+        }
+      }
+    ],
+    [circles]
+  );
+
   // holy shit ufuzzy is fkin fast
   const result: Circle[] = useMemo(() => {
     const query = deferredKeyword.trim();
-    if (!query) return circles;
+    if (!query) return circlesInitialResult;
 
     const idxs = uf.filter(searchableCircles, query);
 
@@ -36,8 +70,8 @@ function SearchResult({ keyword, isLoading }: SearchResultProps) {
 
     const order = uf.sort(info, searchableCircles, query);
 
-    return order.map((i) => circles[info.idx[i]!]!);
-  }, [circles, deferredKeyword, searchableCircles]);
+    return order.map((i) => circlesInitialResult[info.idx[i]!]!);
+  }, [circlesInitialResult, deferredKeyword, searchableCircles]);
 
   const showLoading = isLoading || deferredKeyword !== keyword;
 

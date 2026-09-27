@@ -11,6 +11,7 @@ import { Button } from '@/core/ui/components/button';
 import { cn } from '@/core/ui/utils';
 import { interactionResponse } from '@/core/utils/scheduler';
 
+import { BAD_APPLE_ID } from '@/domain/circle/constants';
 import { Circle } from '@/domain/circle/types';
 import BookmarkButton from '@/features/bookmark/components/BookmarkButton';
 import useZoomToBooth from '@/features/map/hooks/useZoomToBooth';
@@ -29,8 +30,8 @@ function CircleCard({ circle, className, style }: CircleCardProps) {
   const { openDrawer } = useAppDrawer();
 
   const handleSeeOnMap = useCallback(
-    async (e: MouseEvent<HTMLButtonElement>) => {
-      e.stopPropagation();
+    async (e?: MouseEvent<HTMLButtonElement>) => {
+      e?.stopPropagation();
 
       startTransition(() => {
         setIsOpen(false);
@@ -44,8 +45,12 @@ function CircleCard({ circle, className, style }: CircleCardProps) {
   );
 
   const seeDetail = useCallback(() => {
-    openDrawer(APP_DRAWER_ID.CIRCLE_DETAIL, { circle });
-  }, [circle, openDrawer]);
+    if (circle.id === BAD_APPLE_ID) {
+      handleSeeOnMap();
+    } else {
+      openDrawer(APP_DRAWER_ID.CIRCLE_DETAIL, { circle });
+    }
+  }, [circle, openDrawer, handleSeeOnMap]);
 
   return (
     <div
@@ -96,7 +101,7 @@ function CircleCard({ circle, className, style }: CircleCardProps) {
           >
             <RiMap2Line className="text-primary size-4" />
           </Button>
-          <BookmarkButton circleId={circle.id} />
+          {circle.id !== BAD_APPLE_ID && <BookmarkButton circleId={circle.id} />}
         </div>
       </div>
       <div className="flex items-center gap-2">

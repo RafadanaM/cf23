@@ -28,7 +28,7 @@ const CircleContext = createContext<CircleContextValue>({
   searchableCircles: [],
   status: 'pending',
   getCircleDetail: (_circleId: CircleId) => {
-    // noop
+    return undefined;
   }
 });
 
@@ -77,6 +77,8 @@ function CircleProvider({ children }: PropsWithChildren<{}>) {
         dayTwoCircleList.push(circle);
       }
     });
+
+    searchableCircleList.push('bad apple');
 
     return {
       circleLookUp: map,

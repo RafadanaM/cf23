@@ -5,6 +5,7 @@ import { Circle } from '@/domain/circle/types';
 import { APP_DRAWER_ID, useAppDrawer } from '@/layout/drawers/useAppDrawer';
 import { useNavigationTab } from '@/layout/navigation/navigation';
 
+import { BAD_APPLE_ID } from '@/domain/circle/constants';
 import { useActiveCircleAction } from '../contexts/ActiveCircleProvider';
 import { useCircleFilter } from '../contexts/CircleFilterProvider';
 import { useMapControl } from '../contexts/MapProvider';
@@ -22,7 +23,6 @@ function useZoomToBooth() {
     async (circle: Circle) => {
       startTransition(() => {
         setTab('MAP');
-        setActiveCircleId(circle.id);
       });
 
       // switching attending days is HEAVY because it rerenders everything, based on "testing" Activity seems to help alot
@@ -44,15 +44,22 @@ function useZoomToBooth() {
       // wait a bit until zoomToPoint
       await interactionResponse();
 
-      await zoomToPoint(boothToBounds(circle.rect, { y: -150 }));
+      await zoomToPoint(
+        boothToBounds(circle.rect, { y: circle.id === BAD_APPLE_ID ? 0 : -150 })
+      );
 
       // wait a bit after zoom completes
       await interactionResponse();
 
       // open circle detail drawer
       startTransition(() => {
-        openDrawer(APP_DRAWER_ID.CIRCLE_DETAIL, { circle, hideOverlay: true });
+        if (circle.id !== BAD_APPLE_ID) {
+          openDrawer(APP_DRAWER_ID.CIRCLE_DETAIL, { circle, hideOverlay: true });
+        }
       });
+
+      await interactionResponse();
+      setActiveCircleId(circle.id);
     },
     [openDrawer, zoomToPoint, setTab, setActiveCircleId, setAttendingDay]
   );
