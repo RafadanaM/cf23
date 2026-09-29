@@ -119,17 +119,6 @@ function DrawerProvider<Id extends DrawerId, Components extends DrawerComponents
 
       const onClose = drawers.current[idx]?.options?.onClose;
 
-      const isTop = idx === drawers.current.length - 1;
-
-      if (isTop) {
-        history.back();
-
-        interactionResponse().then(() => {
-          onClose?.();
-        });
-        return;
-      }
-
       const nextDrawers = drawers.current.reduce<DrawerInstance<Id, Components>[]>(
         (acc, drawer) => {
           if (drawer.id !== id) {
@@ -144,18 +133,16 @@ function DrawerProvider<Id extends DrawerId, Components extends DrawerComponents
         ? nextDrawers[nextDrawers.length - 1]?.id
         : undefined;
 
-      if (nextHash) {
-        navigate({
-          hash: nextHash,
-          replace: true
-        });
+      navigate({
+        hash: nextHash,
+        replace: true
+      });
 
-        interactionResponse().then(() => {
-          onClose?.();
-        });
-      }
+      interactionResponse().then(() => {
+        onClose?.();
+      });
     },
-    [history, navigate]
+    [navigate]
   );
 
   const closeTopDrawer = useCallback(() => {

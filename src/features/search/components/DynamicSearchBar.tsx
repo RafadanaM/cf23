@@ -32,7 +32,7 @@ function DynamicSearchBar({
           isFocused ? 'hidden' : 'flex'
         )}
       >
-        {'CF 22 Interactive Map'}
+        {'CF 23 Interactive Map'}
       </h1>
       <div className="flex items-center gap-2 w-full max-w-2xl">
         <SearchBar

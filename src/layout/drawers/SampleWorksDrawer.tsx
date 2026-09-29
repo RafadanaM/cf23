@@ -147,7 +147,7 @@ function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerP
       )}
 
       <motion.section
-        className="overflow-hidden flex flex-col bg-foreground/95 fixed bottom-0 left-0 right-0 top-0 md:left-1/2 md:top-1/2 md:bottom-auto md:right-auto md:-translate-y-1/2 md:-translate-x-1/2 md:rounded-lg"
+        className="overflow-hidden flex flex-col bg-foreground/95 fixed bottom-0 left-0 right-0 top-0 md:left-1/2 md:top-1/2 md:bottom-auto md:right-auto md:-translate-y-1/2 md:-translate-x-1/2 md:rounded-lg md:w-11/12 md:max-w-6xl md:max-h-[90vh]"
         initial={{
           y: '100%'
         }}
@@ -159,7 +159,7 @@ function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerP
         }}
         transition={{ type: 'tween' }}
       >
-        <div className="flex item-center justify-between p-4">
+        <div className="flex items-center justify-between p-4">
           <h4 className="text-secondary text-xl font-semibold">{'Sample Works'}</h4>
 
           <Button
@@ -175,21 +175,21 @@ function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerP
         <div className="my-auto flex flex-col gap-y-10">
           <ul
             ref={sliderRef}
-            className="flex gap-x-8 px-2 overflow-x-auto snap-x snap-mandatory h-4/5 cursor-move scroll-smooth scrollbar-none"
+            className="flex gap-x-8 px-2 overflow-x-auto snap-x snap-mandatory cursor-move scroll-smooth scrollbar-none overflow-y-hidden"
             onWheel={handleWheel}
           >
             {works.map((work, idx) => (
               <li
                 key={work}
                 ref={(node) => registerSliderItem(generateKey(work, idx), node)}
-                className="shrink-0 snap-center snap-always basis-4/5 max-h-4/5 flex items-center justify-center"
+                className="shrink-0 snap-center snap-always h-[50vh] md:h-[65vh] w-[85vw] sm:w-[70vw] md:w-full max-w-3xl flex items-center justify-center"
                 data-item-key={generateKey(work, idx)}
               >
                 <img
                   src={work}
                   loading="lazy"
                   alt={`Work ${idx + 1}`}
-                  className="object-cover"
+                  className="w-full h-full object-contain"
                   width={'100%'}
                   height={'100%'}
                 />
@@ -201,7 +201,7 @@ function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerP
             ref={thumbnailListRef}
             role="list"
             aria-label="works thumbnails"
-            className="flex gap-x-3 overflow-x-auto scroll-smooth scrollbar-thin px-2 py-4 bg-foreground"
+            className="flex items-center gap-x-3 overflow-x-auto scroll-smooth scrollbar-thin px-2 py-4 bg-foreground"
           >
             {works.map((work, idx) => (
               <li
@@ -211,20 +211,22 @@ function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerP
                 }
                 data-item-key={generateThumbnailKey(work, idx)}
                 className={cn(
-                  'shrink-0 rounded-sm overflow-hidden flex',
-                  activeItem === generateKey(work, idx) ? 'border-3 border-primary' : ''
+                  'shrink-0 rounded-sm border-3 overflow-hidden',
+                  activeItem === generateKey(work, idx)
+                    ? 'border-blue-500'
+                    : 'border-transparent'
                 )}
               >
                 <button
                   type="button"
-                  className="cursor-pointer"
+                  className="block cursor-pointer"
                   onClick={() => handleClickThumbnail(generateKey(work, idx))}
                 >
                   <img
                     loading="lazy"
                     src={work}
                     alt={`Work ${idx + 1}`}
-                    className="object-cover"
+                    className="object-center block object-cover size-16 md:size-24"
                     width={64}
                     height={64}
                   />
