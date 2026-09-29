@@ -2,8 +2,10 @@
 import type { ReactNode } from 'react';
 import { Outlet, createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
 
-import leafletStyles from 'leaflet/dist/leaflet.css?url';
 import useRegisterServiceWorker from '@/core/hooks/useRegisterServiceWorker';
+
+import geist from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import leafletStyles from 'leaflet/dist/leaflet.css?url';
 import appCss from '../styles.css?url';
 
 export const Route = createRootRoute({
@@ -48,6 +50,13 @@ export const Route = createRootRoute({
         as: 'image',
         type: 'image/webp',
         fetchPriority: 'high'
+      },
+      {
+        rel: 'preload',
+        href: geist,
+        as: 'font',
+        type: 'font/woff2',
+        crossOrigin: 'anonymous'
       }
     ]
   }),
