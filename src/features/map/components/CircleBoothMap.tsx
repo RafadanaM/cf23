@@ -4,8 +4,8 @@ import { useCircle } from '@/domain/circle/contexts/CircleProvider';
 
 import { interactionResponse } from '@/core/utils/scheduler';
 import { useCircleFilter } from '../contexts/CircleFilterProvider';
-import CircleBoothLabels from './CircleBoothLabels';
-import CircleBooths from './CircleBooths';
+import CircleBoothLabels, { CircleBoothLabelsFast } from './CircleBoothLabels';
+import CircleBooths, { CircleBoothsFast } from './CircleBooths';
 
 function CircleMap() {
   // Always render circle booths that exists both days, switch that's either
@@ -38,13 +38,10 @@ function EitherDaysCircles() {
 const BothDaysCircleBooths = memo(() => {
   const { bothDaysCircles } = useCircle();
 
-  const renderedCount = useChunkRenderItems(bothDaysCircles);
-  const chunkedCircles = useDeferredValue(bothDaysCircles.slice(0, renderedCount));
-
   return (
     <>
-      <CircleBooths circles={chunkedCircles} />
-      <CircleBoothLabels circles={chunkedCircles} />
+      <CircleBoothsFast circles={bothDaysCircles} />
+      <CircleBoothLabelsFast circles={bothDaysCircles} />
     </>
   );
 });

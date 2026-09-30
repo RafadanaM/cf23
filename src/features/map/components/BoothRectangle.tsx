@@ -1,10 +1,10 @@
-import {
+import L, {
   LeafletEventHandlerFnMap,
   PathOptions,
   Rectangle as LeafletRectangle,
   PointTuple
 } from 'leaflet';
-import { memo, startTransition, useMemo, useRef } from 'react';
+import { memo, startTransition, useCallback, useMemo, useRef } from 'react';
 import { Rectangle } from 'react-leaflet/Rectangle';
 import { Tooltip } from 'react-leaflet/Tooltip';
 
@@ -114,6 +114,59 @@ function BoothRectangle({
 }
 
 export default memo(BoothRectangle);
+
+export function useBoothRectangle() {
+  // IT IS IMPORTANT TO KEEP THESE HOOKS CONSISTENT ACCROSS RENDERS
+  const { openDrawer } = useAppDrawer();
+  const { setActiveCircleId } = useActiveCircleAction();
+
+  const createBooth = useCallback(
+    ({ circle }: BoothRectangleProps) => {
+      const colorConfig = getColorConfig(circle, false, false);
+      const bounds = boothToBounds(circle.rect);
+
+      const rect = L.rectangle(bounds, {
+        fillColor: colorConfig.backgroundColor,
+        color: colorConfig.borderColor,
+        fillOpacity: 0.5
+      });
+
+      rect.on('click', async () => {
+        startTransition(() => {
+          setActiveCircleId(circle.id);
+        });
+        await interactionResponse();
+
+        openDrawer(APP_DRAWER_ID.CIRCLE_DETAIL, {
+          circle,
+          hideOverlay: true,
+          onClose: () => {
+            startTransition(() => {
+              setActiveCircleId('');
+            });
+          }
+        });
+      });
+
+      rect.on('mouseover', () => {
+        rect.setStyle({
+          fillColor: colorConfig.backgroundColorHover
+        });
+      });
+
+      rect.on('mouseout', () => {
+        rect.setStyle({
+          fillColor: colorConfig.backgroundColor
+        });
+      });
+
+      return rect;
+    },
+    [openDrawer, setActiveCircleId]
+  );
+
+  return createBooth;
+}
 
 function getColorConfig(circle: Circle, isActive: boolean, isBookmarked: boolean) {
   if (isActive || isBookmarked) {
