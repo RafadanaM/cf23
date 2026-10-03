@@ -13,10 +13,10 @@ function Toast({ config, ref }: ToastProps) {
       className="absolute flex top-12 left-1/2 -translate-x-1/2 w-5/6 max-w-2xs min-h-12 bg-card rounded-md shadow-2xl border border-muted-foreground p-1.5"
     >
       <div className="flex-1 flex flex-col gap-1">
-        <p className="font-semibold text-sm">{config.title}</p>
+        <p className="font-semibold text-sm md:text-base">{config.title}</p>
 
         {!!config.description && (
-          <p className="font-medium text-xs text-muted-foreground">
+          <p className="font-medium text-xs md:text-sm text-muted-foreground">
             {config.description}
           </p>
         )}

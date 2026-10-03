@@ -1,9 +1,10 @@
 import { ClientOnly } from '@tanstack/react-router';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { Spinner } from '@/core/ui/components/spinner';
 
+import { useToast } from '@/core/ui/components/toast/ToastProvider';
 import ExpoMap from '@/features/map/components/ExpoMap';
 import MapConfigs from '@/features/map/components/MapConfigs/MapConfigs';
 import { useNavigationTab } from '@/layout/navigation/navigation';
@@ -14,6 +15,17 @@ import SyncSection from '@/layout/sections/SyncSection';
 
 function MainLayout() {
   const { tab } = useNavigationTab();
+
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    showToast({
+      title: 'WARNING!!!',
+      description:
+        'WE ARE SHOWING CF22 DATA! Will update to CF23 Data when CF23 web catalogue is available',
+      timeoutMs: 10_000
+    });
+  }, [showToast]);
 
   return (
     <div className="flex flex-col relative h-screen w-full">
