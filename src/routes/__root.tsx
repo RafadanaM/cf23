@@ -46,7 +46,7 @@ export const Route = createRootRoute({
       },
       {
         rel: 'preload',
-        href: 'floor_map.webp',
+        href: 'floor_map_clean.webp',
         as: 'image',
         type: 'image/webp',
         fetchPriority: 'high'

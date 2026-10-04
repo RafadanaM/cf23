@@ -49,7 +49,7 @@ function ExpoMap() {
           >
             <ImageOverlay
               className="bg-white"
-              url="/floor_map.webp"
+              url="/floor_map_clean.webp"
               alt="cf23 map"
               bounds={bounds}
             />
