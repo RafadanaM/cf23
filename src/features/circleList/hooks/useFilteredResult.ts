@@ -18,7 +18,7 @@ interface Props {
 
 function useFilteredResult({ keyword }: Props) {
   const { circles, options } = useCircle();
-  const { attendingDays, ratings, workTypes } = useFilterList();
+  const { attendingDays, ratings, workTypes, fandoms } = useFilterList();
 
   const circlesInitialResult: Circle[] = useMemo(
     () => [
@@ -61,11 +61,20 @@ function useFilteredResult({ keyword }: Props) {
 
     const isRatingFiltered = ratings.size > 0 && ratings.size < options.ratings.length;
 
-    if (!isAttendingDaysFiltered && !isWorkTypesFiltered && !isRatingFiltered) {
+    const isFandomFiltered = fandoms.size > 0;
+
+    if (
+      !isAttendingDaysFiltered &&
+      !isWorkTypesFiltered &&
+      !isRatingFiltered &&
+      !isFandomFiltered
+    ) {
       return circlesInitialResult;
     }
 
-    const result = circlesInitialResult.filter((circle) => {
+    let result: Circle[] = [];
+
+    result = circlesInitialResult.filter((circle) => {
       const circleAttendingDays =
         !isAttendingDaysFiltered ||
         circle.attendingDays.some((day) => attendingDays.has(day));
@@ -78,6 +87,26 @@ function useFilteredResult({ keyword }: Props) {
 
       return circleAttendingDays && circleWorkTypes && circleRating;
     });
+
+    if (isFandomFiltered) {
+      let query = '';
+
+      fandoms.forEach((fandom) => {
+        query += fandom.toLowerCase() + ' ';
+      });
+
+      const fandomSearchables = result.map((circle) => circle.fandoms.join(' '));
+
+      const idxs = uf.filter(fandomSearchables, query);
+
+      if (!idxs || idxs.length == 0) return [];
+
+      const info = uf.info(idxs, fandomSearchables, query);
+
+      const order = uf.sort(info, fandomSearchables, query);
+
+      result = order.map((i) => result[info.idx[i]!]!);
+    }
     performance.mark('FILTER END');
 
     return result;
@@ -88,7 +117,8 @@ function useFilteredResult({ keyword }: Props) {
     options.ratings.length,
     workTypes,
     ratings,
-    options.workTypes.length
+    options.workTypes.length,
+    fandoms
   ]);
 
   // holy shit ufuzzy is fkin fast

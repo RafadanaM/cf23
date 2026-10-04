@@ -5,7 +5,7 @@ import {
   useContext,
   useMemo
 } from 'react';
-import { useForm, UseFormHandleSubmit, UseFormReturn, useWatch } from 'react-hook-form';
+import { useForm, UseFormReturn, useWatch } from 'react-hook-form';
 import { Circle } from '@/domain/circle/types';
 
 export type ExtractSetType<T> = T extends Set<infer U> ? U : never;
@@ -19,11 +19,15 @@ export type FilterData = {
 
 type FilterAction = {
   reset: (fieldName?: keyof FilterData) => void;
+  add: <T extends keyof FilterData>(
+    fieldName: T,
+    value: ExtractSetType<FilterData[T]>
+  ) => void;
   toggle: <T extends keyof FilterData>(
     fieldName: T,
     value: ExtractSetType<FilterData[T]>
   ) => void;
-  submit: UseFormHandleSubmit<FilterData, FilterData>;
+  getValues: () => FilterData;
   update: (filterData: FilterData) => void;
 };
 
@@ -82,7 +86,7 @@ export function useFilterList<T extends keyof FilterData>(
 }
 
 export function useFilterAction(): FilterAction {
-  const { reset, setValue, getValues, handleSubmit } = useFilter();
+  const { reset, setValue, getValues } = useFilter();
 
   return useMemo(
     () => ({
@@ -104,33 +108,46 @@ export function useFilterAction(): FilterAction {
           });
         }
       },
-
-      toggle: (fieldName, nextVal) => {
+      add: (fieldName, nextVal) => {
         const values = getValues(fieldName);
+        const nextValues = new Set(values);
 
-        // @ts-expect-error
-        if (values.has(nextVal)) {
-          // @ts-expect-error
-          values.delete(nextVal);
-        } else {
-          // @ts-expect-error
-          values.add(nextVal);
-        }
+        nextValues.add(nextVal);
 
         // @ts-expect-error dumbass type
-        setValue(fieldName, new Set(values), {
+        setValue(fieldName, nextValues, {
           shouldDirty: true,
           shouldTouch: true,
           shouldValidate: true
         });
       },
-      // its a pain too abstract handleSubmit
-      submit: handleSubmit,
+      toggle: (fieldName, nextVal) => {
+        const values = getValues(fieldName);
+
+        const nextValues = new Set(values);
+
+        // @ts-expect-error
+        if (values.has(nextVal)) {
+          nextValues.delete(nextVal);
+        } else {
+          nextValues.add(nextVal);
+        }
+
+        // @ts-expect-error dumbass type
+        setValue(fieldName, nextValues, {
+          shouldDirty: true,
+          shouldTouch: true,
+          shouldValidate: true
+        });
+      },
+      getValues: () => {
+        return getValues();
+      },
 
       update: (filterData: FilterData) => {
         reset(filterData);
       }
     }),
-    [getValues, setValue, reset, handleSubmit]
+    [getValues, setValue, reset]
   );
 }

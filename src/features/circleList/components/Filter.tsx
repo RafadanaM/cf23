@@ -14,7 +14,7 @@ function Filter({ resultCount }: FilterProps) {
   return (
     <div className="absolute top-0 left-0-0 w-full flex justify-between items-center gap-x-2 py-1 px-2 sm:px-4">
       {resultCount > 0 && (
-        <span className="text-sm text-muted-foreground block font-medium">{`Circles found: ${resultCount}`}</span>
+        <span className="text-sm text-muted-foreground block font-medium py-1 px-2 bg-card rounded-md border border-border">{`Circles found: ${resultCount}`}</span>
       )}
 
       <ClearFilterButton />
