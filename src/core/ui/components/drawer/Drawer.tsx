@@ -40,7 +40,7 @@ function DrawerContainer({
 
   return (
     <motion.div
-      className="bg-card pointer-events-auto fixed rounded-t-2xl bottom-0 left-0 right-0 max-h-[80vh] border-t border-border shadow-[5px_-4px_19px_5px_rgba(0,0,0,0.25)] md:right-auto md:left-1/2 md:-translate-x-1/2 md:w-md"
+      className="flex flex-col bg-card pointer-events-auto fixed rounded-t-2xl bottom-0 left-0 right-0 max-h-[80vh] border-t border-border shadow-[5px_-4px_19px_5px_rgba(0,0,0,0.25)] md:right-auto md:left-1/2 md:-translate-x-1/2 md:w-md"
       initial={{
         y: '100%'
       }}
@@ -90,7 +90,7 @@ interface DrawerHeaderProps {
 }
 
 function DrawerHeader({ className, children }: PropsWithChildren<DrawerHeaderProps>) {
-  return <div className={cn('px-4', className)}>{children}</div>;
+  return <div className={cn('px-4 pb-2', className)}>{children}</div>;
 }
 
 interface DrawerBodyProps {
@@ -101,7 +101,7 @@ function DrawerBody({ className, children }: PropsWithChildren<DrawerBodyProps>)
   return (
     <div
       className={cn(
-        'flex flex-1 items-stretch flex-col overflow-y-auto w-full p-4',
+        'flex flex-1 items-stretch flex-col overflow-y-auto w-full px-4 py-2',
         className
       )}
     >

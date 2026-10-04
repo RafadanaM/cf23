@@ -41,16 +41,18 @@ function CircleFilterDrawer({ close }: CircleFilterDrawerProps) {
 
   return (
     <Drawer close={close}>
-      <Drawer.Header className="pb-3 border-b border-border">
+      <Drawer.Header className="pb-2 border-b border-border">
         <h3 className="font-semibold text-xl">{'Circles Filter'}</h3>
       </Drawer.Header>
 
-      <Drawer.Body className="flex flex-col gap-y-4">
+      <Drawer.Body>
         <ResetAllButton />
-        <FandomsFilter />
-        <WorkTypesFilter />
-        <RatingsFilter />
-        <AttendingDaysFilter />
+        <div className="flex flex-col gap-y-3">
+          <FandomsFilter />
+          <WorkTypesFilter />
+          <RatingsFilter />
+          <AttendingDaysFilter />
+        </div>
       </Drawer.Body>
 
       <Drawer.Footer className="flex flex-col gap-y-2">
