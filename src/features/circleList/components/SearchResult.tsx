@@ -1,77 +1,24 @@
-import uFuzzy from '@leeoniya/ufuzzy';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { memo, useCallback, useDeferredValue, useMemo, useRef } from 'react';
+import { memo, useCallback, useDeferredValue, useRef } from 'react';
 
 import { cn } from '@/core/ui/utils';
 
-import { useCircle } from '@/domain/circle/contexts/CircleProvider';
 import { Circle } from '@/domain/circle/types';
 
-import { BAD_APPLE_ID } from '@/domain/circle/constants';
-import { MAP_HEIGHT, MAP_WIDTH } from '@/features/map/constants/map';
+import FilterProvider from '../contexts/FilterProvider';
+import useFilteredResult from '../hooks/useFilteredResult';
 import CircleCard from './CircleCard';
+import Filter from './Filter';
 
 interface SearchResultProps {
   keyword: string;
   isLoading: boolean;
 }
 
-const uf = new uFuzzy({
-  intraMode: 1
-});
-
 function SearchResult({ keyword, isLoading }: SearchResultProps) {
-  const { circles, searchableCircles } = useCircle();
-
   const deferredKeyword = useDeferredValue(keyword);
 
-  const circlesInitialResult: Circle[] = useMemo(
-    () => [
-      ...circles,
-      {
-        code: 'Gensokyo',
-        attendingDays: ['SAT', 'SUN'],
-        circleType: 'BOOTH_B',
-        displayConfig: {
-          backgroundColor: '',
-          backgroundColorHover: '',
-          borderColor: ''
-        },
-        fandoms: ['Touhou', 'Bad Apple', 'Zun'],
-        id: BAD_APPLE_ID,
-        imageUrl: '/bad_apple.webp',
-        name: 'Bad Apple??',
-        rating: 'PG',
-        sampleWorks: [],
-        socialMedias: [],
-        workTypes: ['Bad Apple'],
-        rect: {
-          height: 0,
-          width: 0,
-          type: 'VERTICAL',
-          x: MAP_WIDTH / 2,
-          y: MAP_HEIGHT / 2
-        }
-      }
-    ],
-    [circles]
-  );
-
-  // holy shit ufuzzy is fkin fast
-  const result: Circle[] = useMemo(() => {
-    const query = deferredKeyword.trim();
-    if (!query) return circlesInitialResult;
-
-    const idxs = uf.filter(searchableCircles, query);
-
-    if (!idxs || idxs.length === 0) return [];
-
-    const info = uf.info(idxs, searchableCircles, query);
-
-    const order = uf.sort(info, searchableCircles, query);
-
-    return order.map((i) => circlesInitialResult[info.idx[i]!]!);
-  }, [circlesInitialResult, deferredKeyword, searchableCircles]);
+  const result = useDeferredValue(useFilteredResult({ keyword: deferredKeyword }));
 
   const showLoading = isLoading || deferredKeyword !== keyword;
 
@@ -79,13 +26,13 @@ function SearchResult({ keyword, isLoading }: SearchResultProps) {
 
   return (
     <div
-      className={cn(
+      className={
         'fixed top-20 left-0 right-0 bottom-0 md:bottom-auto overflow-hidden md:right-auto md:left-1/2 md:-translate-x-1/2  bg-secondary border-t border-boder origin-top md:w-full md:max-w-2xl md:h-4/5'
-      )}
+      }
     >
       <div
         className={cn(
-          'h-full flex flex-col contain-strict overflow-y-auto',
+          'relative h-full flex flex-col contain-strict overflow-y-auto',
           showLoading ? 'opacity-50' : 'opacity-100'
         )}
       >
@@ -99,12 +46,22 @@ function SearchResult({ keyword, isLoading }: SearchResultProps) {
           </div>
         )}
         {hasResult && <CircleCards circlesResult={result} />}
+        <Filter resultCount={result.length} />
       </div>
     </div>
   );
 }
 
-export default memo(SearchResult);
+function SearchResultContainer(props: SearchResultProps) {
+  return (
+    <FilterProvider>
+      <SearchResult {...props} />
+    </FilterProvider>
+  );
+}
+
+export default memo(SearchResultContainer);
+
 interface CircleCardsProps {
   circlesResult: Circle[];
 }
@@ -131,13 +88,13 @@ const CircleCards = memo(({ circlesResult }: CircleCardsProps) => {
     estimateSize,
     directDomUpdates: true,
     gap: 8,
-    paddingStart: 8,
+    paddingStart: 40,
     paddingEnd: 8
   });
 
   const virtualItems = virtualizer.getVirtualItems();
   return (
-    <div ref={parentRef} className="flex-1 overflow-y-auto">
+    <div ref={parentRef} className="flex-1 overflow-y-auto scrollbar-thin">
       <ul ref={virtualizer.containerRef} className="relative">
         {virtualItems.map(({ key, index }) => (
           <li

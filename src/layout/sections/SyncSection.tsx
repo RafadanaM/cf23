@@ -2,8 +2,12 @@ import { lazy, Suspense } from 'react';
 
 import Section from '@/core/ui/components/section';
 
-const RestoreSyncCard = lazy(() => import('@/features/sync/components/RestoreSyncCard'));
-const UploadSyncCard = lazy(() => import('@/features/sync/components/UploadSyncCard'));
+const RestoreSyncCard = lazy(
+  () => import('@/features/bookmarkSync/components/RestoreSyncCard')
+);
+const UploadSyncCard = lazy(
+  () => import('@/features/bookmarkSync/components/UploadSyncCard')
+);
 
 function SyncSection() {
   return (

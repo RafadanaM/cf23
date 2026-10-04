@@ -22,7 +22,7 @@ const serwist = new Serwist({
     cleanupOutdatedCaches: true,
     concurrency: 10,
     cleanURLs: true,
-    cacheName: 'cf-22-precache'
+    cacheName: 'cf-23-precache'
   },
 
   // lifetime

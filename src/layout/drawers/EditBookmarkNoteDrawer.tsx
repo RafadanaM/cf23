@@ -56,10 +56,10 @@ function EditBookmarkNoteDrawer({ note, circle, close }: EditBookmarkNoteDrawerP
         </Field>
 
         <Drawer.Footer className="flex flex-col gap-1">
-          <Button className="h-10" size="lg">
+          <Button className="h-10" size="lg" type="submit">
             {'Submit'}
           </Button>
-          <Button type="button" variant="secondary" size="lg" onClick={close}>
+          <Button variant="secondary" size="lg" onClick={close}>
             {'Cancel'}
           </Button>
         </Drawer.Footer>

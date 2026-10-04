@@ -95,7 +95,7 @@ function RestoreSyncCard() {
               {...register('syncCode', { required: true })}
             />
           </InputGroup>
-          <Button disabled={isPending || !isValid} size="lg">
+          <Button type="submit" disabled={isPending || !isValid} size="lg">
             {isPending ? (
               <Spinner data-icon="inline-start" />
             ) : (

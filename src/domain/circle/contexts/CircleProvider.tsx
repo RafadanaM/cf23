@@ -16,6 +16,12 @@ interface CircleContextValue {
   dayTwoCircles: Circle[];
   bothDaysCircles: Circle[];
   searchableCircles: string[];
+  // I dont think it should be here but oh well
+  options: {
+    workTypes: Circle['workTypes'];
+    attendingDays: Circle['attendingDays'];
+    ratings: Circle['rating'][];
+  };
   status: QueryStatus;
   getCircleDetail: (circleId: CircleId) => Circle | undefined;
 }
@@ -29,6 +35,11 @@ const CircleContext = createContext<CircleContextValue>({
   status: 'pending',
   getCircleDetail: (_circleId: CircleId) => {
     return undefined;
+  },
+  options: {
+    workTypes: [],
+    attendingDays: [],
+    ratings: []
   }
 });
 
@@ -53,13 +64,21 @@ function CircleProvider({ children }: PropsWithChildren<{}>) {
     dayOneCircles,
     dayTwoCircles,
     bothDaysCircles,
-    searchableCircles
+    searchableCircles,
+    options
   } = useMemo(() => {
     const map = new Map<CircleId, Circle>();
     const dayOneCircleList: Circle[] = [];
     const dayTwoCircleList: Circle[] = [];
     const bothDaysCircleList: Circle[] = [];
     const searchableCircleList: string[] = [];
+    const optionsObj: CircleContextValue['options'] = {
+      workTypes: [],
+      attendingDays: ['SAT', 'SUN'],
+      ratings: ['M', 'PG', 'GA']
+    };
+
+    const workTypes = new Set<string>();
 
     data?.circles.forEach((circle) => {
       map.set(circle.id, circle);
@@ -76,16 +95,23 @@ function CircleProvider({ children }: PropsWithChildren<{}>) {
       } else if (circle.attendingDays.includes('SUN')) {
         dayTwoCircleList.push(circle);
       }
+
+      circle.workTypes.forEach((wt) => {
+        workTypes.add(wt);
+      });
     });
 
     searchableCircleList.push('bad apple touhou');
+
+    optionsObj.workTypes = [...workTypes];
 
     return {
       circleLookUp: map,
       bothDaysCircles: bothDaysCircleList,
       dayOneCircles: dayOneCircleList,
       dayTwoCircles: dayTwoCircleList,
-      searchableCircles: searchableCircleList
+      searchableCircles: searchableCircleList,
+      options: optionsObj
     };
   }, [data?.circles]);
 
@@ -95,6 +121,7 @@ function CircleProvider({ children }: PropsWithChildren<{}>) {
     },
     [circleLookUp]
   );
+
   const memoedValue = useMemo(
     () => ({
       circles: data?.circles ?? [],
@@ -102,19 +129,21 @@ function CircleProvider({ children }: PropsWithChildren<{}>) {
       dayOneCircles,
       dayTwoCircles,
       searchableCircles,
+      options,
       getCircleDetail,
       isFetching,
       status
     }),
     [
       getCircleDetail,
-      data?.circles,
       isFetching,
       dayTwoCircles,
       dayOneCircles,
       bothDaysCircles,
       searchableCircles,
-      status
+      options,
+      status,
+      data?.circles
     ]
   );
 

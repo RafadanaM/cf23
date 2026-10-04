@@ -16,16 +16,20 @@ import SyncSection from '@/layout/sections/SyncSection';
 function MainLayout() {
   const { tab } = useNavigationTab();
 
-  const { showToast } = useToast();
+  const { showToast, hideToast } = useToast();
 
   useEffect(() => {
-    showToast({
+    const id = showToast({
       title: 'WARNING!!!',
       description:
         'WE ARE SHOWING CF22 DATA! Will update to CF23 Data when CF23 web catalogue is available',
-      timeoutMs: 10_000
+      timeoutMs: 5_000
     });
-  }, [showToast]);
+
+    return () => {
+      hideToast(id);
+    };
+  }, [showToast, hideToast]);
 
   return (
     <div className="flex flex-col relative h-screen w-full">

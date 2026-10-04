@@ -15,11 +15,17 @@ import Toast from './Toast';
 import { ShownToast, ToastConfig } from './types';
 
 type ToastContextValue = {
-  showToast: (toastConfig: ToastConfig) => void;
+  showToast: (toastConfig: ToastConfig) => string;
+  hideToast: (toastId: string) => void;
 };
 
 const ToastContext = createContext<ToastContextValue>({
   showToast: (_toastConfig: ToastConfig) => {
+    // noop
+
+    return '';
+  },
+  hideToast: (_toastId: string) => {
     // noop
   }
 });
@@ -46,13 +52,20 @@ function ToastProvider({ children }: PropsWithChildren<{}>) {
     setTimeout(() => {
       showToasts((prev) => prev.filter((x) => x.id !== id));
     }, timeoutMs);
+
+    return id;
+  }, []);
+
+  const hideToast = useCallback((id: string) => {
+    showToasts((prev) => prev.filter((x) => x.id !== id));
   }, []);
 
   const value = useMemo(
     () => ({
-      showToast
+      showToast,
+      hideToast
     }),
-    [showToast]
+    [showToast, hideToast]
   );
 
   return (

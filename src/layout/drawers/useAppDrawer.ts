@@ -7,19 +7,22 @@ const CircleDetailDrawer = lazy(() => import('./CircleDetailDrawer'));
 const EditBookmarkNoteDrawer = lazy(() => import('./EditBookmarkNoteDrawer'));
 const SeeBookmarkNoteDrawer = lazy(() => import('./SeeBookmarkNoteDrawer'));
 const SampleWorksDrawer = lazy(() => import('./SampleWorksDrawer'));
+const CircleFilterDrawer = lazy(() => import('./CircleFilterDrawer'));
 
 export const APP_DRAWER_ID = {
   CIRCLE_DETAIL: 'CIRCLE_DETAIL',
   EDIT_BOOKMARK_NOTE: 'EDIT_BOOKMARK_NOTE',
   SEE_BOOKMARK_NOTE: 'SEE_BOOKMARK_NOTE',
-  SAMPLE_WORKS: 'SAMPLE_WORKS'
+  SAMPLE_WORKS: 'SAMPLE_WORKS',
+  CIRCLE_FILTER: 'CIRCLE_FILTER'
 } as const;
 
 const appDrawerRegistryMap = {
   [APP_DRAWER_ID.CIRCLE_DETAIL]: CircleDetailDrawer,
   [APP_DRAWER_ID.EDIT_BOOKMARK_NOTE]: EditBookmarkNoteDrawer,
   [APP_DRAWER_ID.SEE_BOOKMARK_NOTE]: SeeBookmarkNoteDrawer,
-  [APP_DRAWER_ID.SAMPLE_WORKS]: SampleWorksDrawer
+  [APP_DRAWER_ID.SAMPLE_WORKS]: SampleWorksDrawer,
+  [APP_DRAWER_ID.CIRCLE_FILTER]: CircleFilterDrawer
 } as const;
 
 type AppDrawerRegistryMap = typeof appDrawerRegistryMap;

@@ -93,7 +93,7 @@ function BookmarkCard({ circle }: BookmarkCardProps) {
 
             <div className="flex gap-x-1.5 items-center">
               <RiCalendarLine size={16} className="text-primary" />
-              {circle.attendingDays.map((day) => (
+              {[...circle.attendingDays].map((day) => (
                 <Badge variant={'outline'} key={day} className="capitalize">
                   {day.toLowerCase()}
                 </Badge>

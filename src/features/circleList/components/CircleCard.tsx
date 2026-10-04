@@ -13,10 +13,11 @@ import { interactionResponse } from '@/core/utils/scheduler';
 
 import { BAD_APPLE_ID } from '@/domain/circle/constants';
 import { Circle } from '@/domain/circle/types';
-import BookmarkButton from '@/features/bookmark/components/BookmarkButton';
+import BookmarkButton from '@/features/bookmarkList/components/BookmarkButton';
 import useZoomToBooth from '@/features/map/hooks/useZoomToBooth';
-import { useSearchForm } from '@/features/search/contexts/SearchFormProvider';
 import { APP_DRAWER_ID, useAppDrawer } from '@/layout/drawers/useAppDrawer';
+
+import { useSearchForm } from '../contexts/SearchFormProvider';
 
 interface CircleCardProps {
   style?: CSSProperties;

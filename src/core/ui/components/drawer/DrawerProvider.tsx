@@ -23,22 +23,22 @@ import { interactionResponse } from '@/core/utils/scheduler';
 import Drawer from './Drawer';
 import { DrawerComponents, DrawerId, DrawerRegistry } from './DrawerRegistry';
 
-interface DrawerOptions {
+interface DrawerOptions<TCloseProps = any> {
   hideOverlay?: boolean;
-  onClose?: () => void;
+  onClose?: (closeProps?: TCloseProps) => void;
 }
 
 type DrawerContextValue<Id extends DrawerId, Props> = {
   openDrawer(id: Id, props: Props, options?: DrawerOptions): void;
-  closeDrawer(id: Id): void;
+  closeDrawer(id: Id, data?: unknown): void;
 };
 
 type IsEmptyObject<T> = keyof T extends never ? true : false;
 
 const DrawerContext = createContext<DrawerContextValue<DrawerId, unknown>>(null!);
 
-export type DrawerProps = {
-  close: () => void;
+export type DrawerProps<TCloseProps = unknown> = {
+  close: (closeProps?: TCloseProps) => void;
 };
 
 type DrawerInstance<Id extends DrawerId, Components extends DrawerComponents<Id>> = {
@@ -112,7 +112,7 @@ function DrawerProvider<Id extends DrawerId, Components extends DrawerComponents
   );
 
   const closeDrawer = useCallback(
-    (id: Id) => {
+    (id: Id, closeProps?: unknown) => {
       const idx = drawers.current.findIndex((drawer) => drawer.id === id);
 
       if (idx < 0) return;
@@ -139,7 +139,7 @@ function DrawerProvider<Id extends DrawerId, Components extends DrawerComponents
       });
 
       interactionResponse().then(() => {
-        onClose?.();
+        onClose?.(closeProps);
       });
     },
     [navigate]
@@ -151,7 +151,9 @@ function DrawerProvider<Id extends DrawerId, Components extends DrawerComponents
 
   useEffect(() => {
     if (!currentHash) {
-      setDrawers((prev) => (prev.length ? [] : prev));
+      startTransition(() => {
+        setDrawers((prev) => (prev.length ? [] : prev));
+      });
       return;
     }
 
@@ -220,9 +222,9 @@ function DrawerProvider<Id extends DrawerId, Components extends DrawerComponents
                       <DrawerComponent
                         key={tray.id}
                         {...tray.props}
-                        close={() => {
-                          startTransition(() => {
-                            closeDrawer(tray.id);
+                        close={(closeProps?: unknown) => {
+                          interactionResponse().then(() => {
+                            closeDrawer(tray.id, closeProps);
                           });
                         }}
                       />
@@ -250,6 +252,13 @@ function DrawerLoader() {
   );
 }
 
+type ExtractCloseData<T> =
+  T extends ComponentType<infer P>
+    ? P extends DrawerProps<infer TData>
+      ? TData
+      : any
+    : any;
+
 export function createUseDrawer<Components extends DrawerComponents<DrawerId>>() {
   return function useDrawer() {
     const ctx = useContext(DrawerContext);
@@ -267,16 +276,19 @@ export function createUseDrawer<Components extends DrawerComponents<DrawerId>>()
           ...args: IsEmptyObject<
             Omit<ComponentProps<Components[K]>, 'close'>
           > extends true
-            ? [props?: DrawerOptions]
-            : [props: Omit<ComponentProps<Components[K]>, 'close'> & DrawerOptions]
+            ? [props?: DrawerOptions<ExtractCloseData<Components[K]>>]
+            : [
+                props: Omit<ComponentProps<Components[K]>, 'close'> &
+                  DrawerOptions<ExtractCloseData<Components[K]>>
+              ]
         ) {
           const props = args[0] ?? {};
           const { hideOverlay, onClose, ...componentProps } = props;
           ctx.openDrawer(id, componentProps, { hideOverlay, onClose });
         },
 
-        closeDrawer<K extends Id>(id: K) {
-          ctx.closeDrawer(id);
+        closeDrawer<K extends Id>(id: K, closeProps?: ExtractCloseData<Components[K]>) {
+          ctx.closeDrawer(id, closeProps);
         }
       }),
       [ctx]

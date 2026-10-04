@@ -4,13 +4,13 @@ import useDebounceValue from '@/core/hooks/useDebounceValue';
 import Section from '@/core/ui/components/section';
 
 const BookmarkProgress = lazy(
-  () => import('@/features/bookmark/components/BookmarkProgress')
+  () => import('@/features/bookmarkList/components/BookmarkProgress')
 );
 const BookmarkedCircleList = lazy(
-  () => import('@/features/bookmark/components/BookmarkCircleList')
+  () => import('@/features/bookmarkList/components/BookmarkCircleList')
 );
 const BookmarkSearch = lazy(
-  () => import('@/features/bookmark/components/BookmarkSearch')
+  () => import('@/features/bookmarkList/components/BookmarkSearch')
 );
 
 function BookmarkSection() {

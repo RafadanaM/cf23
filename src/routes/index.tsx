@@ -8,15 +8,14 @@ import ToastProvider from '@/core/ui/components/toast/ToastProvider';
 import BookmarkFormProvider from '@/domain/bookmark/contexts/BookmarkFormProvider';
 import CircleProvider from '@/domain/circle/contexts/CircleProvider';
 
+import SearchFormProvider from '@/features/circleList/contexts/SearchFormProvider';
+import ActiveCircleProvider from '@/features/map/contexts/ActiveCircleProvider';
 import CircleFilterProvider from '@/features/map/contexts/CircleFilterProvider';
 import HighlightBookmarkedCirclesProvider from '@/features/map/contexts/HighlightBookmarkedCircleProvider';
 import MapProvider from '@/features/map/contexts/MapProvider';
-import SearchFormProvider from '@/features/search/contexts/SearchFormProvider';
 import { appDrawerRegistry } from '@/layout/drawers/useAppDrawer';
 import MainLayout from '@/layout/MainLayout';
 import { NavigationTabProvider } from '@/layout/navigation/navigation';
-
-import ActiveCircleProvider from '@/features/map/contexts/ActiveCircleProvider';
 
 export const Route = createFileRoute('/')({
   component: RouteComponent
