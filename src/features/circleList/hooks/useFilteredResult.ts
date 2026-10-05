@@ -43,7 +43,7 @@ function useFilteredResult({ keyword }: Props) {
         rect: {
           height: 0,
           width: 0,
-          type: 'VERTICAL',
+          direction: 'VERTICAL',
           x: MAP_WIDTH / 2,
           y: MAP_HEIGHT / 2
         }

@@ -40,12 +40,7 @@ type BoothRect = {
   y: number;
   width: number;
   height: number;
-  type:
-    | 'VERTICAL'
-    | 'HORIZONTAL'
-    | 'SPECIAL_VERTICAL'
-    | 'SPECIAL_HORIZONTAL'
-    | 'A_Z_HORIZONTAL';
+  direction: 'VERTICAL' | 'HORIZONTAL';
 };
 
 export type NormalizedCircles = {
