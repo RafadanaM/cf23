@@ -11,7 +11,8 @@ import {
 } from '@/core/ui/components/input-group';
 import { Spinner } from '@/core/ui/components/spinner';
 import { useToast } from '@/core/ui/components/toast/ToastProvider';
-import { yieldToMain } from '@/core/utils/scheduler';
+import { interactionResponse } from '@/core/utils/scheduler';
+
 import { useBookmarkActions } from '@/domain/bookmark/contexts/BookmarkFormProvider';
 import useRestoreBookmarkAPI from '@/domain/bookmark/hooks/useRestoreBookmarkAPI';
 
@@ -48,7 +49,7 @@ function RestoreSyncCard() {
           });
           reset();
 
-          await yieldToMain();
+          await interactionResponse();
           showToast({
             title: 'Bookmark Restored!',
             description: 'Check your bookmarks page'

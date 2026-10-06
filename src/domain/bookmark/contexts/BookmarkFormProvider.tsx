@@ -10,6 +10,7 @@ import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form
 import { CircleId } from '@/domain/circle/types';
 import { BookmarkDetail, UserBookmark } from '../types/bookmark';
 
+import { yieldToMain } from '@/core/utils/scheduler';
 import { saveLocalBookmark, getLocalBookmark } from '../utils/bookmark';
 
 function BookmarkFormProvider({ children }: PropsWithChildren<{}>) {
@@ -99,6 +100,11 @@ export function useBookmarkActions() {
   const resetBookmark = useCallback(
     (values?: UserBookmark) => {
       reset(values);
+      yieldToMain().then(() => {
+        if (values) {
+          saveLocalBookmark(values);
+        }
+      });
     },
     [reset]
   );

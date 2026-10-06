@@ -18,9 +18,6 @@ function CircleCodeText({
   const y = offsetY + circle.rect.y + circle.rect.height / 2;
 
   let lines = circle.code.split('/');
-  if (circle.code === 'C-23b') {
-    console.log({ circle, lines });
-  }
 
   if (
     circle.rect.direction === 'HORIZONTAL' &&

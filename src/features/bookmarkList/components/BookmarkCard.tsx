@@ -16,6 +16,7 @@ import { Circle } from '@/domain/circle/types';
 import useZoomToBooth from '@/features/map/hooks/useZoomToBooth';
 import { useAppDrawer, APP_DRAWER_ID } from '@/layout/drawers/useAppDrawer';
 
+import { cn } from '@/core/ui/utils';
 import {
   useBookmarkActions,
   useBookmarkDetail
@@ -61,7 +62,7 @@ function BookmarkCard({ circle }: BookmarkCardProps) {
   };
 
   return (
-    <motion.div layout="position">
+    <motion.div layout="position" className="overflow-hidden">
       <div
         onClick={openDetailDrawer}
         className={
@@ -113,7 +114,10 @@ function BookmarkCard({ circle }: BookmarkCardProps) {
               <Button
                 variant={bookmarkDetail.isComplete ? 'default' : 'outline'}
                 size="icon"
-                className="rounded-full"
+                className={cn(
+                  'rounded-full',
+                  !bookmarkDetail.isComplete && 'border-primary text-primary'
+                )}
                 onClick={toggleComplete}
                 aria-label={
                   bookmarkDetail.isComplete ? 'Unclomplete item' : 'Complete Item'
@@ -132,7 +136,7 @@ function BookmarkCard({ circle }: BookmarkCardProps) {
             onClick={handleSeeNote}
             className="block mt-1 p-2 rounded-lg bg-secondary border"
           >
-            <p className="whitespace-pre-wrap text-justify text-xs text-muted-foreground text-ellipsis leading-tight line-clamp-3">
+            <p className="whitespace-pre-wrap break-all text-justify text-xs text-muted-foreground text-ellipsis leading-tight line-clamp-3">
               {bookmarkDetail.note || '-'}
             </p>
           </button>

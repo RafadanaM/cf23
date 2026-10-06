@@ -17,7 +17,7 @@ function SeeBookmarkNoteDrawer({ note, circle, close }: SeeBookmarkNoteDrawerPro
 
       <Drawer.Body className="flex flex-col gap-2 border-t border-border">
         <div className="min-h-44 mt-1 p-2 rounded-lg bg-secondary border">
-          <p className="whitespace-pre-wrap text-justify text-sm text-muted-foreground text-ellipsis leading-tight line-clamp-3">
+          <p className="whitespace-pre-wrap text-justify text-sm text-muted-foreground leading-tight break-all">
             {note || '-'}
           </p>
         </div>

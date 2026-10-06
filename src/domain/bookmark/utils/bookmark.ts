@@ -2,7 +2,7 @@ import { createClientOnlyFn } from '@tanstack/react-start';
 
 import { UserBookmark } from '../types/bookmark';
 
-import { BOOKMARK_STORAGE_ID } from '../constants/bookmark';
+import { BOOKMARK_STORAGE_ID, MAX_CHARACTERS } from '../constants/bookmark';
 
 function isPlainObject(val: unknown): val is object {
   return typeof val === 'object' && val !== null && !Array.isArray(val);
@@ -70,3 +70,23 @@ export const getLocalBookmark = createClientOnlyFn(() => {
     return null;
   }
 });
+
+export function cleanupBookmark(bookmark: UserBookmark): UserBookmark {
+  const cleanedBookmarks: UserBookmark['bookmarks'] = {};
+
+  Object.entries(bookmark.bookmarks).forEach(([key, value]) => {
+    if (value.note.length <= 500) {
+      cleanedBookmarks[key] = value;
+    } else {
+      cleanedBookmarks[key] = {
+        ...value,
+        note: value.note.slice(0, MAX_CHARACTERS)
+      };
+    }
+  });
+
+  return {
+    ...bookmark,
+    bookmarks: cleanedBookmarks
+  };
+}

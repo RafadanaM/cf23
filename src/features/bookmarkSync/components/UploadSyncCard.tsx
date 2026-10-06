@@ -1,4 +1,11 @@
-import { RiFileCopyLine, RiUploadCloud2Line, RiUploadCloudLine } from '@remixicon/react';
+import {
+  RiEyeLine,
+  RiEyeOffLine,
+  RiFileCopyLine,
+  RiUploadCloud2Line,
+  RiUploadCloudLine
+} from '@remixicon/react';
+import { useState } from 'react';
 
 import { Button } from '@/core/ui/components/button';
 import { Field, FieldDescription, FieldLabel } from '@/core/ui/components/field';
@@ -19,6 +26,7 @@ import useCreateBookmarkAPI from '@/domain/bookmark/hooks/useCreateBookmarkAPI';
 import useUpsertBookmarkAPI from '@/domain/bookmark/hooks/useUpsertBookmarkAPI';
 
 function UploadSyncCard() {
+  const [isHidden, setIsHidden] = useState(true);
   const { isPending: isUpsertBookmarkPending, mutate: upsertBookmark } =
     useUpsertBookmarkAPI();
   const { isPending: isCreateBookmarkPending, mutate: createBookmark } =
@@ -59,7 +67,11 @@ function UploadSyncCard() {
               title: 'Bookmark Created!',
               description: 'Access this bookmark on other devices'
             });
+            setIsHidden(false);
             resetBookmark(data);
+            setTimeout(() => {
+              setIsHidden(true);
+            }, 3_000);
           },
           onError: (e) => {
             showToast({
@@ -117,9 +129,25 @@ function UploadSyncCard() {
             </FieldLabel>
 
             <InputGroup className="h-10 bg-white flex items-center">
-              <InputGroupInput id="sync-cod" value={bookmarkId} readOnly />
+              <InputGroupAddon align="inline-start">
+                <InputGroupButton
+                  onClick={() => setIsHidden((prev) => !prev)}
+                  size="icon-sm"
+                >
+                  {isHidden ? <RiEyeLine /> : <RiEyeOffLine />}
+                </InputGroupButton>
+              </InputGroupAddon>
+              <InputGroupInput
+                id="sync-cod"
+                value={isHidden ? '*************' : bookmarkId}
+                readOnly
+              />
               <InputGroupAddon align="inline-end">
-                <InputGroupButton onClick={handleCopyCode} size="icon-sm">
+                <InputGroupButton
+                  variant={'secondary'}
+                  onClick={handleCopyCode}
+                  size="icon-sm"
+                >
                   <RiFileCopyLine />
                 </InputGroupButton>
               </InputGroupAddon>

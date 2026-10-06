@@ -48,7 +48,6 @@ function DynamicSearchBar({
             className="origin-right text-primary font-semibold"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             onClick={onClose}
           >
             {'Cancel'}
