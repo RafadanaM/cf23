@@ -171,9 +171,9 @@ export function useBoothRectangle() {
 function getColorConfig(circle: Circle, isActive: boolean, isBookmarked: boolean) {
   if (isActive || isBookmarked) {
     return {
-      backgroundColor: '#5a58ed',
-      borderColor: '#432dd7',
-      backgroundColorHover: '#432dd7'
+      backgroundColor: '#7f9dd4',
+      borderColor: '#214da9',
+      backgroundColorHover: '#214da9'
     };
   }
 

@@ -29,11 +29,11 @@ function SearchFormSection() {
   const { closeDrawer } = useAppDrawer();
 
   const handleClose = useCallback(() => {
+    setIsOpen(false);
     startTransition(() => {
-      setIsOpen(false);
+      setKeyword('');
+      setAutocompleteKeyword('');
     });
-    setKeyword('');
-    setAutocompleteKeyword('');
   }, [setIsOpen]);
 
   const handleFocus = useCallback(async () => {

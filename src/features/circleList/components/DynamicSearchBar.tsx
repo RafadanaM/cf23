@@ -23,13 +23,15 @@ function DynamicSearchBar({
     <div
       className={cn(
         'fixed flex flex-col items-center gap-2 top-0 left-0 right-0 p-4 transition-colors',
-        isFocused ? 'bg-card shadow-xl' : 'bg-card/0 pointer-events-none'
+        isFocused
+          ? 'bg-card shadow-xl -translate-y-10'
+          : 'bg-card/0 pointer-events-none translate-y-0'
       )}
     >
       <h1
         className={cn(
-          '-mt-1.5 text-center self-center font-semibold text-white bg-primary py-1 px-3 rounded-full shadow-2xl shadow-primary',
-          isFocused ? 'hidden' : 'flex'
+          '-mt-1.5 text-center self-center font-semibold text-white bg-primary shadow-2xl py-1 px-3 rounded-full shadow-primary',
+          isFocused ? 'opacity-0' : 'opacity-100'
         )}
       >
         {'CF 23 Interactive Map'}
@@ -46,9 +48,10 @@ function DynamicSearchBar({
             variant="ghost"
             key="button"
             className="origin-right text-primary font-semibold"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ translateY: '-150%', opacity: 0 }}
+            animate={{ translateY: 0, opacity: 1 }}
             onClick={onClose}
+            transition={{ type: 'tween' }}
           >
             {'Cancel'}
           </MotionButton>

@@ -27,7 +27,7 @@ function SearchResult({ keyword, isLoading }: SearchResultProps) {
   return (
     <div
       className={
-        'fixed top-20 left-0 right-0 bottom-0 md:bottom-auto overflow-hidden md:right-auto md:left-1/2 md:-translate-x-1/2  bg-secondary border-t border-boder origin-top md:w-full md:max-w-2xl md:h-4/5'
+        'fixed top-18 left-0 right-0 bottom-0 md:bottom-auto overflow-hidden md:right-auto md:left-1/2 md:-translate-x-1/2  bg-secondary border-t border-boder origin-top md:w-full md:max-w-2xl md:h-4/5'
       }
     >
       <div

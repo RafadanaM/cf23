@@ -26,7 +26,6 @@ function SearchBar({ keyword, isFocused, onFocus, onChange }: SearchBarProps) {
         'h-12 rounded-full bg-card pointer-events-auto',
         isFocused ? 'shadow-none' : 'shadow-xl'
       )}
-      transition={{ delay: 0.2 }}
     >
       <InputGroupAddon className="pl-4">
         <RiSearchLine className="size-6 text-primary" />
