@@ -12,6 +12,12 @@ function getDayAmount(attendingDays: AttendingDay[]): string {
   return attendingDays.includes('SAT') ? '1' : '2';
 }
 
+export function attendingDayToDayNum(attendingDay: AttendingDay): string {
+  const dayNumber = attendingDay === 'SAT' ? '1' : '2';
+
+  return `Day ${dayNumber}`;
+}
+
 export function attendingDaysToDays(attendingDays: AttendingDay[]): string[] {
   const days: string[] = [];
 

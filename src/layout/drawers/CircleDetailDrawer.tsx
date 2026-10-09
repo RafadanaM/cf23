@@ -16,9 +16,9 @@ import Drawer from '@/core/ui/components/drawer/Drawer';
 import { DrawerProps } from '@/core/ui/components/drawer/DrawerProvider';
 
 import { Circle, SocialMediaDetail, SocialMediaKind } from '@/domain/circle/types';
-
 import { attendingDaysToString } from '@/domain/circle/utils';
 import BookmarkButton from '@/features/bookmarkList/components/BookmarkButton';
+
 import { useAppDrawer } from './useAppDrawer';
 
 interface CircleDetailDrawerProps extends DrawerProps {
@@ -45,9 +45,16 @@ function CircleDetailDrawer({ circle, close }: CircleDetailDrawerProps) {
         <div className="flex flex-1 gap-1">
           <div className="flex flex-col flex-1 gap-0.5">
             <h3 className="font-semibold text-xl">{circle.name}</h3>
-            <div className="flex gap-1 items-center">
+            <div className="flex gap-2 items-center">
               <RiMapPinLine size={20} className="text-primary" />
-              <span className="font-medium">{circle.code}</span>
+              <span className="font-medium text-sm">{circle.code}</span>
+            </div>
+
+            <div className="flex gap-2 items-center mt-1">
+              <RiCalendarCheckLine size={20} className="text-primary" />
+              <span className="font-medium text-sm">
+                {attendingDaysToString(circle.attendingDays)}
+              </span>
             </div>
           </div>
           <BookmarkButton circleId={circle.id} size={'icon-lg'} />
@@ -71,28 +78,23 @@ function CircleDetailDrawer({ circle, close }: CircleDetailDrawerProps) {
               <SampleWorks sampleWorks={circle.sampleWorks} />
             </DetailSection>
           )}
-          <DetailSection title="Schedule">
-            <Badge className="text-sm h-8 px-3 py-4">
-              <RiCalendarCheckLine className="size-5" />
-              {attendingDaysToString(circle.attendingDays)}
-            </Badge>
-          </DetailSection>
-
-          <DetailSection title="Fandom">
+          <DetailSection title="Fandoms">
             <ul
               role="list"
               aria-label="fandom list"
-              className="flex gap-1 overflow-x-auto scrollbar-thin"
+              className="flex flex-wrap min-w-0 gap-x-1 gap-y-2"
             >
               {circle.fandoms.map((fandom) => (
-                <li role="listitem" key={fandom}>
-                  <Badge
-                    variant="outline"
-                    className="capitalize text-sm h-8 px-3 py-4 border-primary text-primary"
-                  >
-                    {fandom}
-                  </Badge>
-                </li>
+                <Badge
+                  asChild
+                  variant="outline"
+                  className="capitalize text-sm h-8 px-3 border-primary text-primary w-auto justify-start max-w-full"
+                  key={fandom}
+                >
+                  <li role="listitem">
+                    <span className="line-clamp-1 text-ellipsis">{fandom}</span>
+                  </li>
+                </Badge>
               ))}
             </ul>
           </DetailSection>
@@ -107,13 +109,22 @@ function CircleDetailDrawer({ circle, close }: CircleDetailDrawerProps) {
                 <li role="list-item" key={fandom}>
                   <Badge
                     variant="outline"
-                    className="capitalize text-sm h-8 px-3 py-4 border-primary text-primary"
+                    className="capitalize text-sm h-8 px-3 border-primary text-primary"
                   >
                     {fandom}
                   </Badge>
                 </li>
               ))}
             </ul>
+          </DetailSection>
+
+          <DetailSection title="Age Rating">
+            <Badge
+              variant="outline"
+              className="capitalize text-sm h-8 px-3 border-primary text-primary"
+            >
+              {circle.rating}
+            </Badge>
           </DetailSection>
         </div>
       </Drawer.Body>
@@ -135,7 +146,7 @@ interface DetailSectionProps {
 
 function DetailSection({ title, children }: PropsWithChildren<DetailSectionProps>) {
   return (
-    <section className="flex flex-col gap-1">
+    <section className="flex flex-col gap-2">
       <h4 className="font-medium">{title}</h4>
       {children}
     </section>

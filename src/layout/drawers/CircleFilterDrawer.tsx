@@ -12,6 +12,7 @@ import {
   InputGroupInput
 } from '@/core/ui/components/input-group';
 import { useCircle } from '@/domain/circle/contexts/CircleProvider';
+import { attendingDayToDayNum } from '@/domain/circle/utils';
 import FilterProvider, {
   ExtractSetType,
   FilterData,
@@ -130,7 +131,7 @@ function FandomsFilter() {
 
       <ul className="flex gap-2 flex-wrap mt-3">
         {[...activeFilters].map((opt) => (
-          <FilterPill key={opt} name={opt} isActive onPress={handleToggle} />
+          <FilterPill key={opt} name={opt} value={opt} isActive onPress={handleToggle} />
         ))}
       </ul>
 
@@ -182,9 +183,17 @@ function RatingsFilter() {
   return <FilterSection title="Rating" fieldName="ratings" options={ratings} />;
 }
 
+// idk of this is okay
+function isAttendingDaysField(
+  fieldName: keyof FilterData,
+  _option: unknown
+): _option is ExtractSetType<FilterData['attendingDays']> {
+  return fieldName === 'attendingDays';
+}
+
 interface FilterSectionProps<T extends keyof FilterData> {
   title: string;
-  fieldName: T;
+  fieldName: keyof FilterData;
   options: ExtractSetType<FilterData[T]>[];
 }
 
@@ -196,7 +205,7 @@ function FilterSection<T extends keyof FilterData>({
   const { toggle, reset } = useFilterAction();
   const activeFilters = useFilterList(fieldName);
 
-  const isActive = (filter: ExtractSetType<FilterData[T]>) => {
+  const isActive = (filter: FilterPillProps<T>['value']) => {
     // @ts-expect-error
     return activeFilters.has(filter);
   };
@@ -226,7 +235,8 @@ function FilterSection<T extends keyof FilterData>({
         {options.map((opt) => (
           <FilterPill
             key={opt}
-            name={opt}
+            value={opt}
+            name={isAttendingDaysField(fieldName, opt) ? attendingDayToDayNum(opt) : opt}
             isActive={isActive(opt)}
             // @ts-expect-error
             onPress={handleToggle}
@@ -238,21 +248,27 @@ function FilterSection<T extends keyof FilterData>({
 }
 
 interface FilterPillProps<T extends keyof FilterData> {
-  name: ExtractSetType<FilterData[T]>;
+  name: string;
+  value: ExtractSetType<FilterData[T]>;
   isActive?: boolean;
   onPress: (filterName: ExtractSetType<FilterData[T]>) => void;
 }
 
 const FilterPill = memo(
-  <T extends keyof FilterData>({ name, isActive, onPress }: FilterPillProps<T>) => {
+  <T extends keyof FilterData>({
+    name,
+    value,
+    isActive,
+    onPress
+  }: FilterPillProps<T>) => {
     return (
-      <li>
+      <li className="overflow-hidden">
         <Button
-          className="capitalize"
+          className="capitalize max-w-full"
           variant={isActive ? 'default' : 'outline'}
-          onClick={() => onPress(name)}
+          onClick={() => onPress(value)}
         >
-          {name}
+          <span className="text-ellipsis line-clamp-1">{name}</span>
           {isActive && <RiCloseLine />}
         </Button>
       </li>

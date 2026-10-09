@@ -1,9 +1,4 @@
-import {
-  RiFileImageLine,
-  RiMap2Line,
-  RiMapPinLine,
-  RiCalendarLine
-} from '@remixicon/react';
+import { RiFileImageLine, RiMap2Line, RiMapPinLine } from '@remixicon/react';
 import { CSSProperties, memo, useCallback, MouseEvent, startTransition } from 'react';
 
 import { Badge } from '@/core/ui/components/badge';
@@ -17,6 +12,7 @@ import BookmarkButton from '@/features/bookmarkList/components/BookmarkButton';
 import useZoomToBooth from '@/features/map/hooks/useZoomToBooth';
 import { APP_DRAWER_ID, useAppDrawer } from '@/layout/drawers/useAppDrawer';
 
+import { attendingDaysToString } from '@/domain/circle/utils';
 import { useSearchForm } from '../contexts/SearchFormProvider';
 
 interface CircleCardProps {
@@ -76,35 +72,31 @@ function CircleCard({ circle, className, style }: CircleCardProps) {
             <RiFileImageLine size={24} className="text-muted-foreground" />
           </div>
         )}
-        <div className="flex flex-col gap-y-1.5 flex-1">
-          <div>
-            <h3 className="font-semibold text-left line-clamp-2">{circle.name}</h3>
-            <div className="flex gap-1 items-center">
-              <RiMapPinLine size={16} className="text-primary" />
-              <span className="font-medium text-sm">{circle.code}</span>
-            </div>
-          </div>
-          <div className="flex gap-x-1.5 items-center">
-            <RiCalendarLine size={16} className="text-primary" />
-            {circle.attendingDays.map((day) => (
-              <Badge variant={'outline'} key={day} className="capitalize">
-                {day.toLowerCase()}
-              </Badge>
-            ))}
+        <div className="flex-1">
+          <h3 className="font-semibold text-left line-clamp-2">{circle.name}</h3>
+          <div className="flex gap-1 items-center">
+            <RiMapPinLine size={16} className="text-primary" />
+            <span className="font-medium text-sm">{circle.code}</span>
           </div>
         </div>
-        <div className="flex gap-1 self-start items-center">
-          <Button
-            size={'icon'}
-            variant={'outline'}
-            className="border-primary text-primary font-semibold"
-            onClick={handleSeeOnMap}
-          >
-            <RiMap2Line className="text-primary size-4" />
-          </Button>
-          {circle.id !== BAD_APPLE_ID && <BookmarkButton circleId={circle.id} />}
+        <div className="flex flex-col gap-y-2 items-end">
+          <div className="flex gap-1 items-center">
+            <Button
+              size={'icon'}
+              variant={'outline'}
+              className="border-primary text-primary font-semibold"
+              onClick={handleSeeOnMap}
+            >
+              <RiMap2Line className="text-primary size-4" />
+            </Button>
+            {circle.id !== BAD_APPLE_ID && <BookmarkButton circleId={circle.id} />}
+          </div>
+          <Badge variant={'default'} className="capitalize">
+            {attendingDaysToString(circle.attendingDays)}
+          </Badge>
         </div>
       </div>
+
       <div className="flex items-center gap-2">
         <ul className="flex gap-1 w-max overflow-auto flex-1 px-3 no-scrollbar">
           {circle.fandoms.map((fandom, idx) => (

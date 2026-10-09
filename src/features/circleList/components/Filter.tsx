@@ -14,7 +14,7 @@ function Filter({ resultCount }: FilterProps) {
   return (
     <div className="absolute top-0 left-0-0 w-full flex justify-between items-center gap-x-2 py-1 px-2 sm:px-4">
       {resultCount > 0 && (
-        <span className="text-sm text-muted-foreground block font-medium py-1 px-2 bg-card rounded-md border border-border">{`Circles found: ${resultCount}`}</span>
+        <span className="text-sm text-muted-foreground block font-medium py-1 px-2 bg-card rounded-md border border-border shadow-lg">{`Circles found: ${resultCount}`}</span>
       )}
 
       <ClearFilterButton />
@@ -39,7 +39,7 @@ const ClearFilterButton = memo(() => {
   if (!isFiltered) return null;
 
   return (
-    <Button variant="destructive" className="ml-auto" onClick={() => reset()}>
+    <Button variant="destructive" className="ml-auto shadow-lg" onClick={() => reset()}>
       <RiCloseLine />
       {'Clear'}
     </Button>
@@ -71,7 +71,7 @@ const FilterButton = memo(() => {
   const label = totalFiltered > 0 ? `Filter (${totalFiltered})` : 'Filter';
 
   return (
-    <Button className="shadow-xl" onClick={handleClick}>
+    <Button className="shadow-lg" onClick={handleClick}>
       {totalFiltered > 0 ? <RiFilterFill /> : <RiFilterLine />}
       {label}
     </Button>
