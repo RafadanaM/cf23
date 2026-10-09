@@ -3,7 +3,6 @@ import {
   RiEditLine,
   RiFileImageLine,
   RiMapPinLine,
-  RiCalendarLine,
   RiMap2Line
 } from '@remixicon/react';
 import { motion } from 'motion/react';
@@ -11,16 +10,16 @@ import { MouseEvent } from 'react';
 
 import { Badge } from '@/core/ui/components/badge';
 import { Button } from '@/core/ui/components/button';
+import { cn } from '@/core/ui/utils';
 import { Circle } from '@/domain/circle/types';
 
-import useZoomToBooth from '@/features/map/hooks/useZoomToBooth';
-import { useAppDrawer, APP_DRAWER_ID } from '@/layout/drawers/useAppDrawer';
-
-import { cn } from '@/core/ui/utils';
 import {
   useBookmarkActions,
   useBookmarkDetail
 } from '@/domain/bookmark/contexts/BookmarkFormProvider';
+import { attendingDaysToString } from '@/domain/circle/utils';
+import useZoomToBooth from '@/features/map/hooks/useZoomToBooth';
+import { useAppDrawer, APP_DRAWER_ID } from '@/layout/drawers/useAppDrawer';
 
 interface BookmarkCardProps {
   circle: Circle;
@@ -83,25 +82,14 @@ function BookmarkCard({ circle }: BookmarkCardProps) {
               <RiFileImageLine size={24} className="text-muted-foreground" />
             </div>
           )}
-          <div className="flex flex-col flex-1 gap-y-1.5">
-            <div>
-              <h3 className="flex font-semibold line-clamp-2">{circle.name}</h3>
-              <div className="flex gap-1 items-center">
-                <RiMapPinLine size={16} className="text-primary" />
-                <span className="font-medium text-sm">{circle.code}</span>
-              </div>
-            </div>
-
-            <div className="flex gap-x-1.5 items-center">
-              <RiCalendarLine size={16} className="text-primary" />
-              {[...circle.attendingDays].map((day) => (
-                <Badge variant={'outline'} key={day} className="capitalize">
-                  {day.toLowerCase()}
-                </Badge>
-              ))}
+          <div className="flex flex-col flex-1">
+            <h3 className="flex font-semibold line-clamp-2">{circle.name}</h3>
+            <div className="flex gap-1 items-center">
+              <RiMapPinLine size={16} className="text-primary" />
+              <span className="font-medium text-sm">{circle.code}</span>
             </div>
           </div>
-          <div className="flex flex-col items-end space-y-3">
+          <div className="flex flex-col items-end gap-y-2">
             <div className="flex gap-2 items-center">
               <Button
                 size={'icon'}
@@ -126,6 +114,10 @@ function BookmarkCard({ circle }: BookmarkCardProps) {
                 <RiCheckLine className="size-5" />
               </Button>
             </div>
+
+            <Badge variant={'default'} className="capitalize self-stretch">
+              {attendingDaysToString(circle.attendingDays)}
+            </Badge>
           </div>
         </div>
       </div>
