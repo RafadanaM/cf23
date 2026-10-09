@@ -33,6 +33,7 @@ export type Circle = {
   rect: BoothRect;
   displayConfig: DisplayConfig;
   sampleWorks: string[];
+  sampleWorkThumbnails?: string[];
 };
 
 type BoothRect = {

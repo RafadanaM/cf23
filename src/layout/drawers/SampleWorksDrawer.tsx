@@ -10,14 +10,20 @@ import { debounce } from '@/core/utils/scheduler';
 
 interface SampleWorksDrawerProps extends DrawerProps {
   works: string[];
+  workThumbnails: string[];
   startingItemKey?: string;
 }
 
-function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerProps) {
+function SampleWorksDrawer({
+  works,
+  workThumbnails,
+  startingItemKey,
+  close
+}: SampleWorksDrawerProps) {
   const matches = useMediaQuery('(min-width: 48rem)');
 
   const [activeItem, setActiveItem] = useState(() =>
-    startingItemKey || works.length ? generateKey(works[0]!, 0) : ''
+    startingItemKey || works.length ? generateKey(0) : ''
   );
 
   const sliderRef = useRef<HTMLUListElement | null>(null);
@@ -52,6 +58,7 @@ function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerP
     });
   }, [startingItemKey]);
 
+  // should move inside useEffect, too lazy
   const sliderIntersectionCallback = useMemo(
     () =>
       debounce((entries: IntersectionObserverEntry[]) => {
@@ -82,6 +89,7 @@ function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerP
     };
   }, [sliderIntersectionCallback]);
 
+  // should move inside useEffect, too lazy
   const thumbnailIntersectionCallback = useMemo(
     () =>
       debounce((entries: IntersectionObserverEntry[]) => {
@@ -181,9 +189,9 @@ function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerP
             {works.map((work, idx) => (
               <li
                 key={work}
-                ref={(node) => registerSliderItem(generateKey(work, idx), node)}
+                ref={(node) => registerSliderItem(generateKey(idx), node)}
                 className="shrink-0 snap-center snap-always h-[50vh] md:h-[65vh] w-[85vw] sm:w-[70vw] md:w-full max-w-3xl flex items-center justify-center"
-                data-item-key={generateKey(work, idx)}
+                data-item-key={generateKey(idx)}
               >
                 <img
                   src={work}
@@ -203,16 +211,14 @@ function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerP
             aria-label="works thumbnails"
             className="flex items-center gap-x-3 overflow-x-auto scroll-smooth scrollbar-thin px-2 py-4 bg-foreground"
           >
-            {works.map((work, idx) => (
+            {workThumbnails.map((work, idx) => (
               <li
                 key={work}
-                ref={(node) =>
-                  registerThumbnailItem(generateThumbnailKey(work, idx), node)
-                }
-                data-item-key={generateThumbnailKey(work, idx)}
+                ref={(node) => registerThumbnailItem(generateThumbnailKey(idx), node)}
+                data-item-key={generateThumbnailKey(idx)}
                 className={cn(
                   'shrink-0 rounded-sm border-3 overflow-hidden',
-                  activeItem === generateKey(work, idx)
+                  activeItem === generateKey(idx)
                     ? 'border-blue-500'
                     : 'border-transparent'
                 )}
@@ -220,7 +226,7 @@ function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerP
                 <button
                   type="button"
                   className="block cursor-pointer"
-                  onClick={() => handleClickThumbnail(generateKey(work, idx))}
+                  onClick={() => handleClickThumbnail(generateKey(idx))}
                 >
                   <img
                     loading="lazy"
@@ -242,12 +248,12 @@ function SampleWorksDrawer({ works, startingItemKey, close }: SampleWorksDrawerP
 
 export default SampleWorksDrawer;
 
-function generateKey(work: string, idx: number) {
-  return `${work}-${idx}`;
+function generateKey(idx: number) {
+  return String(idx);
 }
 
-function generateThumbnailKey(work: string, idx: number) {
-  return `thumb-${work}-${idx}`;
+function generateThumbnailKey(idx: number) {
+  return `thumb-${idx}`;
 }
 
 function itemToThumbnailKey(itemKey: string) {

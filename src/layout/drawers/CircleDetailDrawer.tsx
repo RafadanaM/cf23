@@ -73,9 +73,12 @@ function CircleDetailDrawer({ circle, close }: CircleDetailDrawerProps) {
         </ul>
 
         <div className="flex flex-col gap-3">
-          {circle.sampleWorks.length > 0 && (
+          {!!circle.sampleWorkThumbnails?.length && (
             <DetailSection title="Sample Works">
-              <SampleWorks sampleWorks={circle.sampleWorks} />
+              <SampleWorks
+                sampleWorkThumbnails={circle.sampleWorkThumbnails}
+                sampleWorks={circle.sampleWorks}
+              />
             </DetailSection>
           )}
           <DetailSection title="Fandoms">
@@ -154,17 +157,19 @@ function DetailSection({ title, children }: PropsWithChildren<DetailSectionProps
 }
 
 interface SampleWorksProps {
+  sampleWorkThumbnails: string[];
   sampleWorks: string[];
 }
 
-function SampleWorks({ sampleWorks }: SampleWorksProps) {
+function SampleWorks({ sampleWorkThumbnails, sampleWorks }: SampleWorksProps) {
   const { openDrawer } = useAppDrawer();
 
-  const handleClick = (key: string, idx: number) => {
+  const handleClick = (idx: number) => {
     openDrawer('SAMPLE_WORKS', {
       hideOverlay: true,
       works: sampleWorks,
-      startingItemKey: `${key}-${idx}`
+      workThumbnails: sampleWorkThumbnails,
+      startingItemKey: String(idx)
     });
   };
 
@@ -174,22 +179,19 @@ function SampleWorks({ sampleWorks }: SampleWorksProps) {
       aria-label="circle sample works"
       className="flex gap-2 overflow-x-auto no-scrollbar"
     >
-      {sampleWorks.map((sampleWorkUrl, idx) => (
-        <li
-          key={sampleWorkUrl}
-          role="listitem"
-          className="overflow-hidden shrink-0 size-16 rounded-md border-primary border-2"
-        >
+      {sampleWorkThumbnails.map((sampleWorkUrl, idx) => (
+        <li key={sampleWorkUrl} role="listitem" className="shrink-0">
           <button
             type="button"
-            onClick={() => handleClick(sampleWorkUrl, idx)}
-            className="cursor-pointer"
+            onClick={() => handleClick(idx)}
+            className="block cursor-pointer"
+            aria-label={`sample work ${idx + 1}`}
           >
             <img
               src={sampleWorkUrl}
               alt={`sample work ${idx + 1}`}
               loading="lazy"
-              className="size-16 object-cover hover:brightness-75 active:brightness-75"
+              className="rounded-md border-primary border-2  size-16 object-cover hover:brightness-75 active:brightness-75"
               width={64}
               height={64}
             />
