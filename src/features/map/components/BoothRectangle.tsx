@@ -94,7 +94,7 @@ function BoothRectangle({
       eventHandlers={eventHandlers}
       bounds={bounds}
       pathOptions={pathOptions}
-      fillOpacity={0.5}
+      fillOpacity={isBookmarked || isActive ? 0.8 : 0.5}
       className="pointer-events-auto"
       pane={pane}
     >
