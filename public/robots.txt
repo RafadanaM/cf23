@@ -1,7 +1,4 @@
 User-agent: *
 Allow: /
 
-Disallow: /api/
-
-
 Sitemap: https://cf23.rafadana.com/sitemap.xml
