@@ -3,7 +3,8 @@ import {
   CacheableResponsePlugin,
   ExpirationPlugin,
   NetworkFirst,
-  Serwist
+  Serwist,
+  StaleWhileRevalidate
 } from 'serwist';
 
 declare global {
@@ -38,16 +39,14 @@ const serwist = new Serwist({
     const cachingArr: RuntimeCaching[] = [
       {
         matcher: ({ url }) => url.pathname.includes('/api/v1/circles'),
-        handler: new NetworkFirst({
-          cacheName: 'circles-response',
-          networkTimeoutSeconds: 3,
+        handler: new StaleWhileRevalidate({
+          cacheName: 'circles-response-cache',
           plugins: [
             new CacheableResponsePlugin({
               statuses: [200]
             }),
             new ExpirationPlugin({
               maxEntries: 30,
-              maxAgeSeconds: 7 * 24 * 60 * 60, // 7 Days,
               purgeOnQuotaError: true
             })
           ]
