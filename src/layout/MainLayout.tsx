@@ -3,9 +3,9 @@ import { Suspense, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { Spinner } from '@/core/ui/components/spinner';
-
-import { RiGithubFill } from '@remixicon/react';
 import { useToast } from '@/core/ui/components/toast/ToastProvider';
+
+import Attribution from '@/features/map/components/Attribution';
 import ExpoMap from '@/features/map/components/ExpoMap';
 import MapConfigs from '@/features/map/components/MapConfigs/MapConfigs';
 import { useNavigationTab } from '@/layout/navigation/navigation';
@@ -43,7 +43,7 @@ function MainLayout() {
       </main>
       <MapConfigs />
 
-      <GithubRepo />
+      <Attribution />
       {/* lazy the content inside instead of the section itself so it immediately appears when opened */}
       <SearchFormSection />
       {tab === 'BOOKMARKS' && <BookmarkSection />}
@@ -56,19 +56,6 @@ function MainLayout() {
 }
 
 export default MainLayout;
-
-function GithubRepo() {
-  return (
-    <a
-      href="https://github.com/RafadanaM/cf23"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="fixed bottom-1 left-1 hover:opacity-50"
-    >
-      <RiGithubFill />
-    </a>
-  );
-}
 
 function MapLoader() {
   return (

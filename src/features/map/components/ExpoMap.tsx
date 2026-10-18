@@ -46,6 +46,7 @@ function ExpoMap() {
             zoomControl={false}
             preferCanvas
             renderer={renderer}
+            attributionControl={false}
           >
             <ImageOverlay
               className="bg-white"
