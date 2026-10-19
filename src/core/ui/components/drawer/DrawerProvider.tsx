@@ -17,10 +17,8 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
-import { Spinner } from '@/core/ui/components/spinner';
-
 import { interactionResponse } from '@/core/utils/scheduler';
-import Drawer from './Drawer';
+import DrawerLoader from './DrawerLoader';
 import { DrawerComponents, DrawerId, DrawerRegistry } from './DrawerRegistry';
 
 interface DrawerOptions<TCloseProps = any> {
@@ -241,16 +239,6 @@ function DrawerProvider<Id extends DrawerId, Components extends DrawerComponents
 }
 
 export default DrawerProvider;
-
-function DrawerLoader() {
-  return (
-    <Drawer animateExit={false}>
-      <Drawer.Body className="items-center py-10">
-        <Spinner className="size-10 text-border" />
-      </Drawer.Body>
-    </Drawer>
-  );
-}
 
 type ExtractCloseData<T> =
   T extends ComponentType<infer P>

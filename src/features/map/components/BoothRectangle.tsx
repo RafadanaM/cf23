@@ -11,8 +11,9 @@ import { Tooltip } from 'react-leaflet/Tooltip';
 import { cn } from '@/core/ui/utils';
 import { interactionResponse } from '@/core/utils/scheduler';
 import { Circle } from '@/domain/circle/types';
-import { useAppDrawer, APP_DRAWER_ID } from '@/layout/drawers/useAppDrawer';
+import { useAppDrawer } from '@/layout/drawers/useAppDrawer';
 
+import { APP_DRAWER_ID } from '@/layout/drawers/constants';
 import { useActiveCircleAction } from '../contexts/ActiveCircleProvider';
 import { boothToBounds } from '../utils/map';
 

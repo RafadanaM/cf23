@@ -2,12 +2,13 @@ import { startTransition, useCallback } from 'react';
 
 import { interactionResponse } from '@/core/utils/scheduler';
 import { Circle } from '@/domain/circle/types';
-import { APP_DRAWER_ID, useAppDrawer } from '@/layout/drawers/useAppDrawer';
+import { useAppDrawer } from '@/layout/drawers/useAppDrawer';
 import { useNavigationTab } from '@/layout/navigation/navigation';
 
 import { useMediaQuery } from '@/core/hooks/useMediaQuery';
 import { BAD_APPLE_ID } from '@/domain/circle/constants';
 import { useSearchForm } from '@/features/circleList/contexts/SearchFormProvider';
+import { APP_DRAWER_ID } from '@/layout/drawers/constants';
 import { useActiveCircleAction } from '../contexts/ActiveCircleProvider';
 import { useCircleFilter } from '../contexts/CircleFilterProvider';
 import { useMapControl } from '../contexts/MapProvider';

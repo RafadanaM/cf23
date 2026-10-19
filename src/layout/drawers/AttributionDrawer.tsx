@@ -2,9 +2,11 @@ import { Button } from '@/core/ui/components/button';
 import Drawer from '@/core/ui/components/drawer/Drawer';
 import { DrawerProps } from '@/core/ui/components/drawer/DrawerProvider';
 
+import { APP_DRAWER_ID } from './constants';
+
 function AttributionDrawer({ close }: DrawerProps) {
   return (
-    <Drawer close={close}>
+    <Drawer close={close} layoutId={APP_DRAWER_ID.ATTRIBUTION}>
       <Drawer.Header className="flex gap-2 pb-2">
         <h2 className="text-xl font-semibold capitalize">{'Attribution'}</h2>
       </Drawer.Header>

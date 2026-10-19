@@ -19,6 +19,7 @@ import { Circle, SocialMediaDetail, SocialMediaKind } from '@/domain/circle/type
 import { attendingDaysToString } from '@/domain/circle/utils';
 import BookmarkButton from '@/features/bookmarkList/components/BookmarkButton';
 
+import { APP_DRAWER_ID } from './constants';
 import { useAppDrawer } from './useAppDrawer';
 
 interface CircleDetailDrawerProps extends DrawerProps {
@@ -27,7 +28,7 @@ interface CircleDetailDrawerProps extends DrawerProps {
 
 function CircleDetailDrawer({ circle, close }: CircleDetailDrawerProps) {
   return (
-    <Drawer close={close}>
+    <Drawer close={close} layoutId={APP_DRAWER_ID.CIRCLE_DETAIL}>
       <Drawer.Header className="flex gap-2">
         {circle.imageUrl ? (
           <img

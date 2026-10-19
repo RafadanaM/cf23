@@ -8,10 +8,12 @@ import { Field, FieldLabel } from '@/core/ui/components/field';
 import { Textarea } from '@/core/ui/components/textarea';
 import { cn } from '@/core/ui/utils';
 import { interactionResponse } from '@/core/utils/scheduler';
-import { Circle } from '@/domain/circle/types';
 
 import { MAX_CHARACTERS } from '@/domain/bookmark/constants/bookmark';
 import { useBookmarkActions } from '@/domain/bookmark/contexts/BookmarkFormProvider';
+import { Circle } from '@/domain/circle/types';
+
+import { APP_DRAWER_ID } from './constants';
 
 interface EditBookmarkNoteDrawerProps extends DrawerProps {
   circle: Circle;
@@ -43,7 +45,7 @@ function EditBookmarkNoteDrawer({ note, circle, close }: EditBookmarkNoteDrawerP
   };
 
   return (
-    <Drawer close={close}>
+    <Drawer close={close} layoutId={APP_DRAWER_ID.EDIT_BOOKMARK_NOTE}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Field>
           <Drawer.Header className="flex gap-2">

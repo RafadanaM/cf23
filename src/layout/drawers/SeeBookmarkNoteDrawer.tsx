@@ -1,7 +1,10 @@
 import { Button } from '@/core/ui/components/button';
 import Drawer from '@/core/ui/components/drawer/Drawer';
 import { DrawerProps } from '@/core/ui/components/drawer/DrawerProvider';
+
 import { Circle } from '@/domain/circle/types';
+
+import { APP_DRAWER_ID } from './constants';
 
 interface SeeBookmarkNoteDrawerProps extends DrawerProps {
   circle: Circle;
@@ -10,7 +13,7 @@ interface SeeBookmarkNoteDrawerProps extends DrawerProps {
 
 function SeeBookmarkNoteDrawer({ note, circle, close }: SeeBookmarkNoteDrawerProps) {
   return (
-    <Drawer close={close}>
+    <Drawer close={close} layoutId={APP_DRAWER_ID.SEE_BOOKMARK_NOTE}>
       <Drawer.Header className="flex gap-2 pb-2">
         <h2 className="text-xl font-semibold capitalize">{`${circle.name} Note`}</h2>
       </Drawer.Header>

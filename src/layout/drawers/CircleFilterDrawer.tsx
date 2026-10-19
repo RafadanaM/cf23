@@ -19,6 +19,7 @@ import FilterProvider, {
   useFilterAction,
   useFilterList
 } from '@/features/circleList/contexts/FilterProvider';
+import { APP_DRAWER_ID } from './constants';
 
 interface CircleFilterDrawerProps extends DrawerProps<{
   filterData?: FilterData;
@@ -41,13 +42,13 @@ function CircleFilterDrawer({ close }: CircleFilterDrawerProps) {
   };
 
   return (
-    <Drawer close={close}>
-      <Drawer.Header className="pb-2 border-b border-border">
+    <Drawer close={close} layoutId={APP_DRAWER_ID.CIRCLE_FILTER}>
+      <Drawer.Header className="pb-2 border-b border-border flex justify-between items-center">
         <h3 className="font-semibold text-xl">{'Circles Filter'}</h3>
+        <ResetAllButton />
       </Drawer.Header>
 
       <Drawer.Body>
-        <ResetAllButton />
         <div className="flex flex-col gap-y-3">
           <FandomsFilter />
           <WorkTypesFilter />

@@ -10,9 +10,10 @@ import { BAD_APPLE_ID } from '@/domain/circle/constants';
 import { Circle } from '@/domain/circle/types';
 import BookmarkButton from '@/features/bookmarkList/components/BookmarkButton';
 import useZoomToBooth from '@/features/map/hooks/useZoomToBooth';
-import { APP_DRAWER_ID, useAppDrawer } from '@/layout/drawers/useAppDrawer';
+import { useAppDrawer } from '@/layout/drawers/useAppDrawer';
 
 import { attendingDaysToString } from '@/domain/circle/utils';
+import { APP_DRAWER_ID } from '@/layout/drawers/constants';
 import { useSearchForm } from '../contexts/SearchFormProvider';
 
 interface CircleCardProps {

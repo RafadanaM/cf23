@@ -1,8 +1,9 @@
 import { animate, motion, PanInfo, useDragControls, useMotionValue } from 'motion/react';
-import { PropsWithChildren, useCallback, PointerEvent } from 'react';
+import { PropsWithChildren, useCallback, PointerEvent, CSSProperties } from 'react';
 import { cn } from '../../utils';
 
 interface DrawerProps {
+  layoutId?: string;
   animateExit?: boolean;
   close?: () => void;
 }
@@ -13,7 +14,8 @@ const VELOCITY_THRESHOLD = 600;
 function DrawerContainer({
   children,
   close,
-  animateExit = true
+  animateExit = true,
+  layoutId
 }: PropsWithChildren<DrawerProps>) {
   const dragControls = useDragControls();
   const y = useMotionValue(0);
@@ -40,6 +42,8 @@ function DrawerContainer({
 
   return (
     <motion.div
+      layoutId={layoutId}
+      layout={layoutId ? 'position' : undefined}
       className="flex flex-col bg-card pointer-events-auto fixed rounded-t-2xl bottom-0 left-0 right-0 max-h-[80vh] border-t border-border shadow-[5px_-4px_19px_5px_rgba(0,0,0,0.25)] md:right-auto md:left-1/2 md:-translate-x-1/2 md:w-md"
       initial={{
         y: '100%'
@@ -95,15 +99,17 @@ function DrawerHeader({ className, children }: PropsWithChildren<DrawerHeaderPro
 
 interface DrawerBodyProps {
   className?: string;
+  style?: CSSProperties;
 }
 
-function DrawerBody({ className, children }: PropsWithChildren<DrawerBodyProps>) {
+function DrawerBody({ className, style, children }: PropsWithChildren<DrawerBodyProps>) {
   return (
     <div
       className={cn(
-        'flex flex-1 items-stretch flex-col overflow-y-auto w-full px-4 py-2',
+        'flex items-stretch flex-col overflow-y-auto w-full px-4 py-2',
         className
       )}
+      style={style}
     >
       {children}
     </div>

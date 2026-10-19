@@ -12,8 +12,9 @@ import { useMediaQuery } from '@/core/hooks/useMediaQuery';
 import { debounce, interactionResponse } from '@/core/utils/scheduler';
 import DynamicSearchBar from '@/features/circleList/components/DynamicSearchBar';
 import { useSearchForm } from '@/features/circleList/contexts/SearchFormProvider';
-import { APP_DRAWER_ID, useAppDrawer } from '@/layout/drawers/useAppDrawer';
+import { useAppDrawer } from '@/layout/drawers/useAppDrawer';
 
+import { APP_DRAWER_ID } from '../drawers/constants';
 import { useNavigationTab } from '../navigation/navigation';
 
 const SearchResult = lazy(() => import('@/features/circleList/components/SearchResult'));

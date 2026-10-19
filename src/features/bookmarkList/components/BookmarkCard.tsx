@@ -19,7 +19,8 @@ import {
 } from '@/domain/bookmark/contexts/BookmarkFormProvider';
 import { attendingDaysToString } from '@/domain/circle/utils';
 import useZoomToBooth from '@/features/map/hooks/useZoomToBooth';
-import { useAppDrawer, APP_DRAWER_ID } from '@/layout/drawers/useAppDrawer';
+import { APP_DRAWER_ID } from '@/layout/drawers/constants';
+import { useAppDrawer } from '@/layout/drawers/useAppDrawer';
 
 interface BookmarkCardProps {
   circle: Circle;
