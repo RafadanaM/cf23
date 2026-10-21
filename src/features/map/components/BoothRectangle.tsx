@@ -180,7 +180,7 @@ function getColorConfig(_circle: Circle, isActive: boolean, isBookmarked: boolea
 
   return {
     backgroundColor: '#FFFFFF',
-    borderColor: '#424242',
+    borderColor: '#757474',
     backgroundColorHover: '#ababab'
   };
 }
