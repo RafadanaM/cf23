@@ -169,7 +169,7 @@ export function useBoothRectangle() {
   return createBooth;
 }
 
-function getColorConfig(circle: Circle, isActive: boolean, isBookmarked: boolean) {
+function getColorConfig(_circle: Circle, isActive: boolean, isBookmarked: boolean) {
   if (isActive || isBookmarked) {
     return {
       backgroundColor: '#214da9',
@@ -179,8 +179,8 @@ function getColorConfig(circle: Circle, isActive: boolean, isBookmarked: boolean
   }
 
   return {
-    backgroundColor: circle.displayConfig.backgroundColor,
-    borderColor: circle.displayConfig.borderColor,
-    backgroundColorHover: circle.displayConfig.backgroundColorHover
+    backgroundColor: '#FFFFFF',
+    borderColor: '#424242',
+    backgroundColorHover: '#ababab'
   };
 }
