@@ -6,7 +6,8 @@ import {
   RiInstagramLine,
   RiLink,
   RiMapPinLine,
-  RiTwitterXLine
+  RiTwitterXLine,
+  RiYoutubeLine
 } from '@remixicon/react';
 import { PropsWithChildren } from 'react';
 
@@ -230,5 +231,6 @@ const IconMap: Record<SocialMediaKind, RemixiconComponentType> = {
   TWITTER: RiTwitterXLine,
   FACEBOOK: RiFacebookCircleLine,
   INSTAGRAM: RiInstagramLine,
+  YOUTUBE: RiYoutubeLine,
   OTHER: RiLink
 };

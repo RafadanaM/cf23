@@ -47,8 +47,6 @@ function getLoader(key: (typeof APP_DRAWER_ID)[keyof typeof APP_DRAWER_ID]) {
 
   const height = HEIGHT_MAPPING[key];
 
-  console.log({ height });
-
   if (!height) return undefined;
 
   return <DrawerLoader height={height} layoutId={key} />;

@@ -2,7 +2,7 @@ export type CircleType = 'BOOTH_B' | 'BOOTH_A' | '1_SPACE' | '4_SPACE' | '2_SPAC
 
 export type AttendingDay = 'SAT' | 'SUN';
 
-export type SocialMediaKind = 'FACEBOOK' | 'TWITTER' | 'INSTAGRAM' | 'OTHER';
+export type SocialMediaKind = 'FACEBOOK' | 'TWITTER' | 'INSTAGRAM' | 'YOUTUBE' | 'OTHER';
 
 export type SocialMediaDetail = {
   kind: SocialMediaKind;
