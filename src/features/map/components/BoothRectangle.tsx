@@ -179,8 +179,12 @@ function getColorConfig(_circle: Circle, isActive: boolean, isBookmarked: boolea
   }
 
   return {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#757474',
-    backgroundColorHover: '#ababab'
+    // backgroundColor: '#FFFFFF',
+    // borderColor: '#757474',
+    // backgroundColorHover: '#ababab'
+
+    backgroundColor: '#8ab0ed',
+    borderColor: '#729fe8',
+    backgroundColorHover: '#003b84'
   };
 }
