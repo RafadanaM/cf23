@@ -5,7 +5,6 @@ import { Outlet, createRootRoute, HeadContent, Scripts } from '@tanstack/react-r
 import useRegisterServiceWorker from '@/core/hooks/useRegisterServiceWorker';
 
 import geist from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
-import leafletStyles from 'leaflet/dist/leaflet.css?url';
 import appCss from '../styles.css?url';
 
 export const Route = createRootRoute({
@@ -53,7 +52,6 @@ export const Route = createRootRoute({
       }
     ],
     links: [
-      { rel: 'stylesheet', href: leafletStyles },
       { rel: 'stylesheet', href: appCss },
       { rel: 'manifest', href: '/manifest.json' },
       { rel: 'canonical', href: 'https://cf23.rafadana.com' },
@@ -66,13 +64,7 @@ export const Route = createRootRoute({
         href: '/favicon.ico',
         sizes: 'any'
       },
-      {
-        rel: 'preload',
-        href: 'floor_map_clean.webp',
-        as: 'image',
-        type: 'image/webp',
-        fetchPriority: 'high'
-      },
+
       {
         rel: 'preload',
         href: geist,

@@ -1,18 +1,19 @@
 import { startTransition, useCallback } from 'react';
 
+import { useMediaQuery } from '@/core/hooks/useMediaQuery';
 import { interactionResponse } from '@/core/utils/scheduler';
+
+import { BAD_APPLE_ID } from '@/domain/circle/constants';
 import { Circle } from '@/domain/circle/types';
+import { useSearchForm } from '@/features/circleList/contexts/SearchFormProvider';
+import { useBadApple } from '@/features/map/contexts/BadAppleProvider';
+import { APP_DRAWER_ID } from '@/layout/drawers/constants';
 import { useAppDrawer } from '@/layout/drawers/useAppDrawer';
 import { useNavigationTab } from '@/layout/navigation/navigation';
 
-import { useMediaQuery } from '@/core/hooks/useMediaQuery';
-import { BAD_APPLE_ID } from '@/domain/circle/constants';
-import { useSearchForm } from '@/features/circleList/contexts/SearchFormProvider';
-import { APP_DRAWER_ID } from '@/layout/drawers/constants';
 import { useActiveCircleAction } from '../contexts/ActiveCircleProvider';
 import { useCircleFilter } from '../contexts/CircleFilterProvider';
 import { useMapControl } from '../contexts/MapProvider';
-import { boothToBounds } from '../utils/map';
 
 function useZoomToBooth() {
   const { zoomToPoint } = useMapControl();
@@ -22,6 +23,9 @@ function useZoomToBooth() {
   const { setActiveCircleId } = useActiveCircleAction();
   const { setAttendingDay } = useCircleFilter();
   const { setIsOpen } = useSearchForm();
+
+  const { setShow } = useBadApple();
+
   const matches = useMediaQuery('(min-width: 48rem)');
 
   const zoomToBooth = useCallback(
@@ -53,9 +57,10 @@ function useZoomToBooth() {
       // wait a bit until zoomToPoint
       await interactionResponse();
 
-      await zoomToPoint(
-        boothToBounds(circle.rect, { y: circle.id === BAD_APPLE_ID ? 0 : -150 })
-      );
+      await zoomToPoint({
+        x: circle.rect.x,
+        y: circle.rect.y + (circle.id === BAD_APPLE_ID ? 0 : -150)
+      });
 
       // open circle detail drawer
       startTransition(() => {
@@ -65,7 +70,11 @@ function useZoomToBooth() {
       });
 
       await interactionResponse();
-      setActiveCircleId(circle.id);
+      if (circle.id === BAD_APPLE_ID) {
+        setShow(true);
+      } else {
+        setActiveCircleId(circle.id);
+      }
     },
     [
       openDrawer,
@@ -74,7 +83,8 @@ function useZoomToBooth() {
       setActiveCircleId,
       setAttendingDay,
       setIsOpen,
-      matches
+      matches,
+      setShow
     ]
   );
 

@@ -1,20 +1,22 @@
-import { useMemo } from 'react';
-import { SVGOverlay } from 'react-leaflet/SVGOverlay';
+import { useEffect, useMemo } from 'react';
 
 import { useBookmarkList } from '@/domain/bookmark/contexts/BookmarkFormProvider';
 import { useCircle } from '@/domain/circle/contexts/CircleProvider';
 import { Circle } from '@/domain/circle/types';
 
-import { bounds, MAP_HEIGHT, MAP_WIDTH } from '../constants/map';
 import { useCircleFilter } from '../contexts/CircleFilterProvider';
 import { useHighlightBookmarkedCircles } from '../contexts/HighlightBookmarkedCircleProvider';
+import { useMapRegistry } from '../contexts/MapProvider';
+import { useTooltip } from '../contexts/TooltipProvider';
 import BoothRectangle from './BoothRectangle';
-import CircleCodeText from './CircleCodeText';
 
-function BookmarkedCircleBooths() {
+function BookmarkedBooths() {
   const { getCircleDetail } = useCircle();
   const { bookmarks } = useBookmarkList();
   const { status } = useCircle();
+  const { map } = useMapRegistry();
+
+  const { updateCoord } = useTooltip();
 
   const { attendingDay } = useCircleFilter();
   const { highlightBookmarkedCircles } = useHighlightBookmarkedCircles();
@@ -33,32 +35,37 @@ function BookmarkedCircleBooths() {
     [getCircleDetail, bookmarks, attendingDay]
   );
 
+  useEffect(() => {
+    const mapInstance = map.current;
+
+    if (!mapInstance || !highlightBookmarkedCircles) return;
+    console.log('RUN');
+
+    function update() {
+      renderedItems.forEach((item) => {
+        const screenPoint = mapInstance!.toScreen(
+          item.circle.rect.x + item.circle.rect.width / 2,
+          item.circle.rect.y
+        );
+
+        updateCoord(item.circle.id, { x: screenPoint.x, y: screenPoint.y });
+      });
+    }
+
+    update();
+
+    mapInstance.on('moved', update);
+
+    return () => {
+      mapInstance.off('moved', update);
+    };
+  }, [map, updateCoord, renderedItems, highlightBookmarkedCircles]);
+
   if (renderedItems.length === 0 || status !== 'success') return null;
 
-  return (
-    <>
-      {renderedItems.map(({ circle, isCompleted }) => (
-        <BoothRectangle
-          key={circle.id}
-          circle={circle}
-          isBookmarked
-          isHighlighted={highlightBookmarkedCircles}
-          isBookmarkComplete={isCompleted}
-          pane="bookmarks"
-        />
-      ))}
-
-      <SVGOverlay
-        bounds={bounds}
-        attributes={{ viewBox: `0 0 ${MAP_WIDTH} ${MAP_HEIGHT}` }}
-        pane="bookmarks"
-      >
-        {renderedItems.map(({ circle }) => (
-          <CircleCodeText key={circle.id} circle={circle} isActive />
-        ))}
-      </SVGOverlay>
-    </>
-  );
+  return renderedItems.map(({ circle }) => (
+    <BoothRectangle key={circle.id} circle={circle} isBookmarked />
+  ));
 }
 
-export default BookmarkedCircleBooths;
+export default BookmarkedBooths;

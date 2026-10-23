@@ -1,176 +1,138 @@
-import L, {
-  LeafletEventHandlerFnMap,
-  PathOptions,
-  Rectangle as LeafletRectangle,
-  PointTuple
-} from 'leaflet';
-import { memo, startTransition, useCallback, useMemo, useRef } from 'react';
-import { Rectangle } from 'react-leaflet/Rectangle';
-import { Tooltip } from 'react-leaflet/Tooltip';
-
-import { cn } from '@/core/ui/utils';
-import { interactionResponse } from '@/core/utils/scheduler';
+import { startTransition, useState } from 'react';
 import { Circle } from '@/domain/circle/types';
+import { useActiveCircleAction } from '@/features/map/contexts/ActiveCircleProvider';
+import { APP_DRAWER_ID } from '@/layout/drawers/constants';
 import { useAppDrawer } from '@/layout/drawers/useAppDrawer';
 
-import { APP_DRAWER_ID } from '@/layout/drawers/constants';
-import { useActiveCircleAction } from '../contexts/ActiveCircleProvider';
-import { boothToBounds } from '../utils/map';
-
 interface BoothRectangleProps {
-  pane?: string;
   circle: Circle;
   isActive?: boolean;
-  isBookmarkComplete?: boolean;
   isBookmarked?: boolean;
-  isHighlighted?: boolean;
 }
-
-const tooltipOffset: PointTuple = [0, 0];
 
 function BoothRectangle({
   circle,
   isActive = false,
-  isBookmarked = false,
-  isHighlighted = false,
-  isBookmarkComplete = false,
-  pane
+  isBookmarked = false
 }: BoothRectangleProps) {
-  const rectangleRef = useRef<LeafletRectangle | null>(null);
-  // IT IS IMPORTANT TO KEEP THESE HOOKS CONSISTENT ACCROSS RENDERS
+  const [hover, setHover] = useState(false);
   const { openDrawer } = useAppDrawer();
   const { setActiveCircleId } = useActiveCircleAction();
+  const colorConfig = getColorConfig(isActive, isBookmarked);
 
-  const { backgroundColor, backgroundColorHover, borderColor } = getColorConfig(
-    circle,
-    isActive,
-    isBookmarked
-  );
-
-  const eventHandlers: LeafletEventHandlerFnMap = useMemo(() => {
-    return {
-      click: async () => {
-        startTransition(() => {
-          setActiveCircleId(circle.id);
-        });
-        await interactionResponse();
-
-        openDrawer(APP_DRAWER_ID.CIRCLE_DETAIL, {
-          circle,
-          hideOverlay: true,
-          onClose: () => {
-            startTransition(() => {
-              setActiveCircleId('');
-            });
-          }
-        });
-      },
-      mouseover: () => {
-        rectangleRef.current?.setStyle({
-          fillColor: backgroundColorHover
-        });
-      },
-      mouseout: () => {
-        rectangleRef.current?.setStyle({
-          fillColor: backgroundColor
-        });
-      }
-    };
-  }, [openDrawer, circle, backgroundColor, backgroundColorHover, setActiveCircleId]);
-
-  const pathOptions: PathOptions = useMemo(
-    () => ({
-      fillColor: backgroundColor,
-      color: borderColor,
-      pane
-    }),
-    [borderColor, backgroundColor, pane]
-  );
-
-  const bounds = useMemo(() => boothToBounds(circle.rect), [circle.rect]);
+  function handleClick() {
+    setActiveCircleId(circle.id);
+    startTransition(() => {
+      openDrawer(APP_DRAWER_ID.CIRCLE_DETAIL, {
+        circle,
+        hideOverlay: true,
+        onClose: () => {
+          setActiveCircleId('');
+        }
+      });
+    });
+  }
 
   return (
-    <Rectangle
-      ref={rectangleRef}
-      eventHandlers={eventHandlers}
-      bounds={bounds}
-      pathOptions={pathOptions}
-      fillOpacity={isBookmarked || isActive ? 0.8 : 0.5}
-      className="pointer-events-auto"
-      pane={pane}
+    <pixiContainer
+      x={circle.rect.x}
+      y={circle.rect.y}
+      interactive
+      onPointerTap={handleClick}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
+      cursor="pointer"
     >
-      {isHighlighted && (
-        <Tooltip
-          direction="top"
-          offset={tooltipOffset}
-          permanent
-          className={cn('flex flex-col', isBookmarkComplete ? 'brightness-80' : '')}
-        >
-          <span className="text-sm font-bold">{circle.code}</span>
-          <span className="text-xs font-medium">{circle.name}</span>
-        </Tooltip>
-      )}
-    </Rectangle>
+      <pixiGraphics
+        draw={(g) => {
+          g.clear();
+          const fillColor = hover
+            ? colorConfig.backgroundColorHover
+            : colorConfig.backgroundColor;
+          const fillAlpha = isActive || isBookmarked ? 1 : 0.25;
+          const strokeColor = colorConfig.borderColor;
+
+          g.rect(0, 0, circle.rect.width, circle.rect.height);
+          g.fill({ color: fillColor, alpha: fillAlpha });
+          g.stroke({ width: 2, color: strokeColor });
+        }}
+      />
+      <BoothText circle={circle} isActive={isActive || isBookmarked} />
+    </pixiContainer>
   );
 }
 
-export default memo(BoothRectangle);
+export default BoothRectangle;
 
-export function useBoothRectangle() {
-  // IT IS IMPORTANT TO KEEP THESE HOOKS CONSISTENT ACCROSS RENDERS
-  const { openDrawer } = useAppDrawer();
-  const { setActiveCircleId } = useActiveCircleAction();
-
-  const createBooth = useCallback(
-    ({ circle }: BoothRectangleProps) => {
-      const colorConfig = getColorConfig(circle, false, false);
-      const bounds = boothToBounds(circle.rect);
-
-      const rect = L.rectangle(bounds, {
-        fillColor: colorConfig.backgroundColor,
-        color: colorConfig.borderColor,
-        fillOpacity: 0.5
-      });
-
-      rect.on('click', async () => {
-        startTransition(() => {
-          setActiveCircleId(circle.id);
-        });
-        await interactionResponse();
-
-        openDrawer(APP_DRAWER_ID.CIRCLE_DETAIL, {
-          circle,
-          hideOverlay: true,
-          onClose: () => {
-            startTransition(() => {
-              setActiveCircleId('');
-            });
-          }
-        });
-      });
-
-      rect.on('mouseover', () => {
-        rect.setStyle({
-          fillColor: colorConfig.backgroundColorHover
-        });
-      });
-
-      rect.on('mouseout', () => {
-        rect.setStyle({
-          fillColor: colorConfig.backgroundColor
-        });
-      });
-
-      return rect;
-    },
-    [openDrawer, setActiveCircleId]
-  );
-
-  return createBooth;
+function BoothText({ circle, isActive }: { circle: Circle; isActive: boolean }) {
+  return splitCode(circle).map(({ text, x, y }) => (
+    <pixiText
+      key={text}
+      text={text}
+      x={x}
+      y={y}
+      anchor={0.5}
+      scale={0.25}
+      style={{
+        fontSize: 40,
+        fill: isActive ? '#FFFFFF' : '#000000'
+      }}
+    />
+  ));
 }
 
-function getColorConfig(_circle: Circle, isActive: boolean, isBookmarked: boolean) {
-  if (isActive || isBookmarked) {
+function splitCode(circle: Circle): { x: number; y: number; text: string }[] {
+  const codes = circle.code.split('/');
+
+  if (
+    circle.rect.direction === 'HORIZONTAL' &&
+    codes.length === 1 &&
+    circle.circleType === '1_SPACE'
+  ) {
+    const lines = codes[0]!.split('-');
+    lines.splice(1, 0, '-');
+    return lines.map((code, idx) => ({
+      x: circle.rect.width / 2,
+      y: circle.rect.height * getFraction(idx, lines.length, 0.7),
+      text: code
+    }));
+  }
+
+  if (circle.rect.direction === 'VERTICAL' && codes.length > 1) {
+    return codes.map((code, idx) => ({
+      x: circle.rect.width / 2,
+      y: circle.rect.height * getFraction(idx, codes.length),
+      text: code
+    }));
+  }
+
+  if (circle.rect.direction === 'HORIZONTAL' && codes.length > 1) {
+    return codes.map((code, idx) => ({
+      x: circle.rect.width * getFraction(idx, codes.length),
+      y: circle.rect.height / 2,
+      text: code
+    }));
+  }
+
+  return [
+    {
+      x: circle.rect.width / 2,
+      y: circle.rect.height / 2,
+      text: circle.code
+    }
+  ];
+}
+
+function getFraction(idx: number, total: number, offset = 1) {
+  const center = 0.5;
+
+  const standard = (2 * idx + 1) / (2 * total);
+
+  return center + (standard - center) * offset;
+}
+
+function getColorConfig(isActive: boolean, isBookmarked: boolean) {
+  if (isActive) {
     return {
       backgroundColor: '#214da9',
       borderColor: '#003b84',
@@ -178,11 +140,15 @@ function getColorConfig(_circle: Circle, isActive: boolean, isBookmarked: boolea
     };
   }
 
-  return {
-    // backgroundColor: '#FFFFFF',
-    // borderColor: '#757474',
-    // backgroundColorHover: '#ababab'
+  if (isBookmarked) {
+    return {
+      backgroundColor: '#4061a8',
+      borderColor: '#214da9',
+      backgroundColorHover: '#214da9'
+    };
+  }
 
+  return {
     backgroundColor: '#ccd8eb',
     borderColor: '#729fe8',
     backgroundColorHover: '#a1bbe3'

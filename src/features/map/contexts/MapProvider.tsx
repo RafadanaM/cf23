@@ -1,4 +1,4 @@
-import L from 'leaflet';
+import { Viewport } from 'pixi-viewport';
 
 import {
   createContext,
@@ -6,21 +6,28 @@ import {
   RefObject,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef
 } from 'react';
+import { MAP_HEIGHT, MAP_WIDTH } from '../constants/map';
 
 type MapRegistryContextValue = {
-  map: RefObject<L.Map | null>;
-  register: (target: L.Map | null) => void;
+  map: RefObject<Viewport | null>;
+  register: (target: Viewport | null) => void;
+};
+
+type Position = {
+  x: number;
+  y: number;
 };
 
 type MapControlContextValue = {
-  zoomToPoint: (bounds: L.LatLngBoundsExpression) => Promise<unknown>;
+  zoomToPoint: (position: Position) => Promise<unknown>;
 };
 
 const MapControlContext = createContext<MapControlContextValue>({
-  zoomToPoint: async (_bounds: L.LatLngBoundsExpression) => {
+  zoomToPoint: async (_position: Position) => {
     // noop
   }
 });
@@ -29,29 +36,88 @@ const MapRegistryContext = createContext<MapRegistryContextValue>({
   map: {
     current: null
   },
-  register: (_target: L.Map | null) => {
+  register: (_target: Viewport | null) => {
     // noop
   }
 });
 
 function MapProvider({ children }: PropsWithChildren<{}>) {
-  const mapRef = useRef<L.Map | null>(null);
+  const mapRef = useRef<Viewport | null>(null);
 
-  const register = useCallback((map: L.Map | null) => {
+  const register = useCallback((map: Viewport | null) => {
+    // cleanup
+    if (mapRef.current) {
+      mapRef.current.removeAllListeners();
+    }
+
+    if (!map) {
+      mapRef.current = null;
+
+      return;
+    }
+
     mapRef.current = map;
-    map?.setZoom(-1, {
-      animate: false
+
+    map
+      .drag({
+        pressDrag: true,
+        mouseButtons: 'all',
+        wheel: false
+      })
+      .pinch()
+      .wheel()
+      .decelerate({
+        friction: 0.92,
+        bounce: 0.8
+      })
+      .clampZoom({
+        maxScale: 3,
+        minScale: 0.25
+      })
+      .clamp({
+        direction: 'all'
+      })
+      .moveCenter(MAP_WIDTH / 2, MAP_HEIGHT / 2)
+      .setZoom(1, true);
+  }, []);
+
+  const zoomToPoint = useCallback((position: Position) => {
+    return new Promise<void>((resolve) => {
+      const map = mapRef.current;
+      if (!map) return;
+      const dx = position.x - map.center.x;
+      const dy = position.y - map.center.y;
+      const distance = Math.hypot(dx, dy);
+
+      mapRef.current?.animate({
+        position,
+        scale: 1,
+        time: Math.max(150, Math.min(1000, distance * 0.5)),
+        callbackOnComplete: () => {
+          resolve();
+        }
+      });
     });
   }, []);
 
-  const zoomToPoint = useCallback((bounds: L.LatLngBoundsExpression) => {
-    return new Promise((resolve) => {
-      mapRef.current?.once('moveend', resolve);
+  useEffect(() => {
+    if (!mapRef.current) return;
 
-      mapRef.current?.flyToBounds(bounds, {
-        maxZoom: 0
-      });
+    const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
+
+      const { width, height } = entry.contentRect;
+
+      if (width > 0 && height > 0) {
+        mapRef.current?.resize(width, height);
+      }
     });
+
+    observer.observe(document.body);
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   const controlValues = useMemo(

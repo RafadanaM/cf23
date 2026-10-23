@@ -10,6 +10,7 @@ import CircleProvider from '@/domain/circle/contexts/CircleProvider';
 
 import SearchFormProvider from '@/features/circleList/contexts/SearchFormProvider';
 import ActiveCircleProvider from '@/features/map/contexts/ActiveCircleProvider';
+import BadAppleProvider from '@/features/map/contexts/BadAppleProvider';
 import CircleFilterProvider from '@/features/map/contexts/CircleFilterProvider';
 import HighlightBookmarkedCirclesProvider from '@/features/map/contexts/HighlightBookmarkedCircleProvider';
 import MapProvider from '@/features/map/contexts/MapProvider';
@@ -33,9 +34,11 @@ function RouteComponent() {
                   <ActiveCircleProvider>
                     <SearchFormProvider>
                       <BookmarkFormProvider>
-                        <DrawerProvider registry={appDrawerRegistry}>
-                          <MainLayout />
-                        </DrawerProvider>
+                        <BadAppleProvider>
+                          <DrawerProvider registry={appDrawerRegistry}>
+                            <MainLayout />
+                          </DrawerProvider>
+                        </BadAppleProvider>
                       </BookmarkFormProvider>
                     </SearchFormProvider>
                   </ActiveCircleProvider>
