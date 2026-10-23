@@ -6,7 +6,6 @@ import {
   RefObject,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef
 } from 'react';
@@ -43,6 +42,7 @@ const MapRegistryContext = createContext<MapRegistryContextValue>({
 
 function MapProvider({ children }: PropsWithChildren<{}>) {
   const mapRef = useRef<Viewport | null>(null);
+  const observerRef = useRef<ResizeObserver | null>(null);
 
   const register = useCallback((map: Viewport | null) => {
     // cleanup
@@ -50,8 +50,13 @@ function MapProvider({ children }: PropsWithChildren<{}>) {
       mapRef.current.removeAllListeners();
     }
 
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
     if (!map) {
       mapRef.current = null;
+      observerRef.current = null;
 
       return;
     }
@@ -79,6 +84,20 @@ function MapProvider({ children }: PropsWithChildren<{}>) {
       })
       .moveCenter(MAP_WIDTH / 2, MAP_HEIGHT / 2)
       .setZoom(1, true);
+
+    const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
+
+      const { width, height } = entry.contentRect;
+
+      if (width > 0 && height > 0) {
+        mapRef.current?.resize(width, height);
+      }
+    });
+
+    observer.observe(document.body);
+
+    observerRef.current = observer;
   }, []);
 
   const zoomToPoint = useCallback((position: Position) => {
@@ -98,26 +117,6 @@ function MapProvider({ children }: PropsWithChildren<{}>) {
         }
       });
     });
-  }, []);
-
-  useEffect(() => {
-    if (!mapRef.current) return;
-
-    const observer = new ResizeObserver(([entry]) => {
-      if (!entry) return;
-
-      const { width, height } = entry.contentRect;
-
-      if (width > 0 && height > 0) {
-        mapRef.current?.resize(width, height);
-      }
-    });
-
-    observer.observe(document.body);
-
-    return () => {
-      observer.disconnect();
-    };
   }, []);
 
   const controlValues = useMemo(

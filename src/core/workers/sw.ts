@@ -26,6 +26,15 @@ const serwist = new Serwist({
     cacheName: 'cf-23-precache'
   },
 
+  fallbacks: {
+    entries: [
+      {
+        url: '/',
+        matcher: ({ request }) => request.mode === 'navigate'
+      }
+    ]
+  },
+
   // lifetime
   skipWaiting: true,
   clientsClaim: true,

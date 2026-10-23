@@ -39,7 +39,6 @@ function BookmarkedBooths() {
     const mapInstance = map.current;
 
     if (!mapInstance || !highlightBookmarkedCircles) return;
-    console.log('RUN');
 
     function update() {
       renderedItems.forEach((item) => {

@@ -64,7 +64,13 @@ export const Route = createRootRoute({
         href: '/favicon.ico',
         sizes: 'any'
       },
-
+      {
+        rel: 'preload',
+        href: '/floor_map_clean.webp',
+        as: 'fetch',
+        fetchPriority: 'high',
+        crossOrigin: 'anonymous'
+      },
       {
         rel: 'preload',
         href: geist,

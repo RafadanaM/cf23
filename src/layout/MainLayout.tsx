@@ -1,18 +1,16 @@
 import { ClientOnly } from '@tanstack/react-router';
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import { Spinner } from '@/core/ui/components/spinner';
-
 import Attribution from '@/features/map/components/Attribution';
+import ExpoMap from '@/features/map/components/ExpoMap';
 import MapConfigs from '@/features/map/components/MapConfigs/MapConfigs';
+import MapLoader from '@/features/map/components/MapLoader';
 import { useNavigationTab } from '@/layout/navigation/navigation';
 import NavigationTab from '@/layout/navigation/NavigationTab';
 import BookmarkSection from '@/layout/sections/BookmarkSection';
 import SearchFormSection from '@/layout/sections/SearchFormSection';
 import SyncSection from '@/layout/sections/SyncSection';
-
-const ExpoMap = lazy(() => import('@/features/map/components/ExpoMap'));
 
 function MainLayout() {
   const { tab } = useNavigationTab();
@@ -43,11 +41,3 @@ function MainLayout() {
 }
 
 export default MainLayout;
-
-function MapLoader() {
-  return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center">
-      <Spinner className="size-8" />
-    </div>
-  );
-}

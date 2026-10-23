@@ -7,7 +7,6 @@ import { build } from 'vite';
 export function tanstackSerwistPlugin(): Plugin {
   let rootDir: string;
   let isProduction: boolean;
-  let isSSR: boolean;
 
   return {
     name: 'tanstack-serwist',
@@ -15,24 +14,17 @@ export function tanstackSerwistPlugin(): Plugin {
     configResolved: (config) => {
       rootDir = config.root;
       isProduction = config.isProduction;
-      isSSR = !!config.build.ssr;
     },
     buildStart: async () => {
       // Build service worker in dev mode
       if (!isProduction) {
         await buildServiceWorker(rootDir, isProduction);
       }
-    },
-    closeBundle: async () => {
-      // Build service worker in production mode
-      if (isProduction && !isSSR) {
-        await buildServiceWorker(rootDir, true);
-      }
     }
   };
 }
 
-async function buildServiceWorker(rootDir: string, isProduction: boolean) {
+export async function buildServiceWorker(rootDir: string, isProduction: boolean) {
   const outName = 'sw.js';
 
   const outDir = isProduction
