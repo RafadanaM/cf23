@@ -31,6 +31,7 @@ function ExpoMap() {
           autoDensity
           resizeTo={window}
           onInit={handleInit}
+          resolution={window.devicePixelRatio}
         >
           {ready && <MapContent />}
         </Application>
