@@ -24,11 +24,12 @@ function MapContent({ bg }: MapContentProps) {
       worldHeight={MAP_HEIGHT}
       worldWidth={MAP_WIDTH}
       events={app.renderer.events}
+      threshold={10}
     >
       <Background bg={bg} />
       <AllBooths />
-      <ActiveBooth />
       <BookmarkedBooths />
+      <ActiveBooth />
       <BadAppleRenderer />
     </viewport>
   );

@@ -65,15 +65,15 @@ function MapProvider({ children }: PropsWithChildren<{}>) {
 
     map
       .drag({
-        pressDrag: true,
         mouseButtons: 'all',
         wheel: false
       })
       .pinch()
       .wheel()
       .decelerate({
-        friction: 0.92,
-        bounce: 0.8
+        friction: 0.95,
+        bounce: 0.8,
+        minSpeed: 0.01
       })
       .clampZoom({
         maxScale: 3,

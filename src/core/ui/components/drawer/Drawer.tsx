@@ -66,7 +66,7 @@ function DrawerContainer({
       dragListener={false}
       dragMomentum={false}
       dragElastic={0.3}
-      transition={{ type: 'tween' }}
+      transition={{ type: 'spring', stiffness: 400, damping: 40 }}
       dragConstraints={{ top: 0 }}
       onDragEnd={handleDragEnd}
     >

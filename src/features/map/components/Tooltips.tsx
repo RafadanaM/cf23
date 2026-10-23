@@ -84,7 +84,7 @@ function Tooltips() {
     <div
       key={item.circle.id}
       ref={register(item.circle.id)}
-      className="absolute top-0 left-0 flex flex-col items-center"
+      className="absolute top-0 left-0 flex flex-col items-center pointer-events-none"
     >
       <div
         className={cn(

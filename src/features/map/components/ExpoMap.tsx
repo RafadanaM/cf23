@@ -47,6 +47,7 @@ function ExpoMap() {
           resizeTo={window}
           onInit={handleInit}
           resolution={window.devicePixelRatio}
+          roundPixels
         >
           {ready && <MapContent bg={bg} />}
         </Application>
