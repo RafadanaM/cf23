@@ -26,7 +26,12 @@ function ExpoMap() {
         aria-labelledby="tab-MAP"
         className="relative w-screen h-screen overflow-hidden cursor-grab active:cursor-grabbing"
       >
-        <Application background={'#ffffff'} resizeTo={window} onInit={handleInit}>
+        <Application
+          background={'#ffffff'}
+          autoDensity
+          resizeTo={window}
+          onInit={handleInit}
+        >
           {ready && <MapContent />}
         </Application>
         <BadAppleAudio />
