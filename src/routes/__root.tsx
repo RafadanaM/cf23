@@ -68,8 +68,7 @@ export const Route = createRootRoute({
         rel: 'preload',
         href: '/floor_map_clean.webp',
         as: 'fetch',
-        crossOrigin: 'anonymous',
-        fetchPriority: 'high'
+        crossOrigin: 'anonymous'
       },
 
       {
