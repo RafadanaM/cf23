@@ -48,7 +48,7 @@ function Tooltips() {
     let rafId: number | undefined;
 
     let elapsed = 0;
-    const fps = 30;
+    const fps = 60;
     const interval = 1000 / fps;
 
     function animate(currentTime: number) {
