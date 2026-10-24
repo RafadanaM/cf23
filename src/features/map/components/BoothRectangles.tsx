@@ -114,8 +114,6 @@ function BoothRectangles({
           x.tint = getColorConfig(false, isBookmarked);
         }
       });
-
-      // child.tint = getColorConfig(false, isBookmarked);
     });
 
     container.on('pointerout', (event) => {
