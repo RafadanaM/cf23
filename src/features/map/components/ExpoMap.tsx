@@ -1,6 +1,14 @@
 import { Application, extend } from '@pixi/react';
 import { Viewport as PixiViewport } from 'pixi-viewport';
-import { Assets, Container, Graphics, Sprite, Text, Texture } from 'pixi.js';
+import {
+  Assets,
+  Container,
+  Graphics,
+  loadTextures,
+  Sprite,
+  Text,
+  Texture
+} from 'pixi.js';
 import { useCallback, useEffect, useState } from 'react';
 
 import TooltipProvider from '../contexts/TooltipProvider';
@@ -12,13 +20,18 @@ import Tooltips from './Tooltips';
 
 extend({ Viewport: PixiViewport, Sprite, Container, Graphics, Text });
 
+loadTextures.config = {
+  preferWorkers: false,
+  crossOrigin: 'anonymous',
+  preferCreateImageBitmap: true
+};
+
 function ExpoMap() {
   const [ready, setReady] = useState(false);
 
   const [bg, setBg] = useState<Texture | null>(null);
 
   useEffect(() => {
-    performance.mark('LOAD ASSET');
     Assets.load('/floor_map_clean.webp')
       .then((texture) => {
         setBg(texture);

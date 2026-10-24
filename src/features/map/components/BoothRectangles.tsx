@@ -2,6 +2,7 @@ import { Text, Texture } from 'pixi.js';
 
 import { Circle } from '@/domain/circle/types';
 
+import { useDeferredValue } from 'react';
 import BoothRectangle from './BoothRectangle';
 
 interface BoothRectanglesProps {
@@ -17,19 +18,21 @@ function BoothRectangles({
   getRectangleTexture,
   registerTextRef
 }: BoothRectanglesProps) {
+  const deferredCircles = useDeferredValue(
+    circles.filter((c) => !!getRectangleTexture(c.rect.width, c.rect.height))
+  );
+
   return (
     <pixiContainer>
-      {circles
-        .filter((c) => !!getRectangleTexture(c.rect.width, c.rect.height))
-        .map((circle) => (
-          <BoothRectangle
-            key={circle.id}
-            circle={circle}
-            registerTextRef={registerTextRef}
-            texture={getRectangleTexture(circle.rect.width, circle.rect.height)!}
-            isBookmarked={isBookmarked}
-          />
-        ))}
+      {deferredCircles.map((circle) => (
+        <BoothRectangle
+          key={circle.id}
+          circle={circle}
+          registerTextRef={registerTextRef}
+          texture={getRectangleTexture(circle.rect.width, circle.rect.height)!}
+          isBookmarked={isBookmarked}
+        />
+      ))}
     </pixiContainer>
   );
 }
