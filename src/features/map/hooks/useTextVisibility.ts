@@ -1,4 +1,4 @@
-import { Text } from 'pixi.js';
+import { BitmapText } from 'pixi.js';
 import { useRef, useCallback, useEffect, useMemo } from 'react';
 
 import { useMapRegistry } from '../contexts/MapProvider';
@@ -6,9 +6,9 @@ import { useMapRegistry } from '../contexts/MapProvider';
 function useTextVisibility() {
   const { map } = useMapRegistry();
 
-  const texts = useRef<Text[]>([]);
+  const texts = useRef<BitmapText[]>([]);
 
-  const registerRef = useCallback((textNode: Text | null) => {
+  const registerRef = useCallback((textNode: BitmapText | null) => {
     if (!textNode) return;
     texts.current.push(textNode);
   }, []);

@@ -1,5 +1,5 @@
-import { Text, Texture } from 'pixi.js';
-import { startTransition, useState } from 'react';
+import { BitmapFont, BitmapText, Container, Sprite, Texture } from 'pixi.js';
+import { startTransition, useCallback, useMemo, useState } from 'react';
 
 import { Circle } from '@/domain/circle/types';
 import { useActiveCircleAction } from '@/features/map/contexts/ActiveCircleProvider';
@@ -8,12 +8,19 @@ import { useAppDrawer } from '@/layout/drawers/useAppDrawer';
 
 import { useMapRegistry } from '../contexts/MapProvider';
 
+BitmapFont.install({
+  name: 'boothDefault',
+  style: { fontFamily: 'Helvetica', fontSize: 80, fill: '#FFFFFF' },
+  chars: [['A', 'Z'], ['0', '9'], '-_ '],
+  resolution: 4
+});
+
 interface BoothRectangleProps {
   circle: Circle;
   texture: Texture;
   isActive?: boolean;
   isBookmarked?: boolean;
-  registerTextRef?: (node: Text | null) => void;
+  registerTextRef?: (node: BitmapText | null) => void;
 }
 
 function BoothRectangle({
@@ -69,15 +76,102 @@ function BoothRectangle({
 
 export default BoothRectangle;
 
+export function useBoothRectangle() {
+  const { openDrawer } = useAppDrawer();
+  const { setActiveCircleId } = useActiveCircleAction();
+  const { map } = useMapRegistry();
+
+  const createBoothRectangle = useCallback(
+    ({
+      texture,
+      circle,
+      registerTextRef,
+      isActive = false,
+      isBookmarked = false
+    }: BoothRectangleProps) => {
+      const mapInstance = map.current;
+      const colorConfig = getColorConfig(isActive, isBookmarked);
+
+      function handleClick() {
+        setActiveCircleId(circle.id);
+        startTransition(() => {
+          openDrawer(APP_DRAWER_ID.CIRCLE_DETAIL, {
+            circle,
+            hideOverlay: true,
+            onClose: () => {
+              setActiveCircleId('');
+            }
+          });
+        });
+      }
+
+      const sprite = new Sprite({
+        texture
+      });
+
+      const texts = splitCode(circle).map(
+        ({ text, x, y }) =>
+          new BitmapText({
+            eventMode: 'none',
+            text,
+            x,
+            y,
+            anchor: 0.5,
+            scale: 0.25,
+            style: {
+              fontFamily: 'boothDefault',
+              fontSize: 40
+            }
+          })
+      );
+
+      for (const text of texts) {
+        text.tint = isActive || isBookmarked ? '#FFFFFF' : '#000000';
+      }
+
+      const container = new Container({
+        eventMode: 'static',
+        x: circle.rect.x,
+        y: circle.rect.y,
+        cursor: 'pointer'
+      });
+
+      container.on('pointertap', () => {
+        if (mapInstance?.moving) return;
+        handleClick();
+      });
+
+      container.on('pointerenter', () => {
+        sprite.tint = colorConfig;
+      });
+
+      container.on('pointerleave', () => {
+        sprite.tint = '#FFFFFF';
+      });
+
+      container.addChild(sprite, ...texts);
+
+      for (const text of texts) {
+        registerTextRef?.(text);
+      }
+
+      return container;
+    },
+    [openDrawer, setActiveCircleId, map]
+  );
+
+  return useMemo(() => ({ createBoothRectangle }), [createBoothRectangle]);
+}
+
 interface BoothTextProps {
   circle: Circle;
   isActive: boolean;
-  registerTextRef?: (node: Text | null) => void;
+  registerTextRef?: (node: BitmapText | null) => void;
 }
 
 function BoothText({ circle, isActive, registerTextRef }: BoothTextProps) {
   return splitCode(circle).map(({ text, x, y }) => (
-    <pixiText
+    <pixiBitmapText
       ref={registerTextRef}
       eventMode="none"
       key={text}
@@ -87,9 +181,10 @@ function BoothText({ circle, isActive, registerTextRef }: BoothTextProps) {
       anchor={0.5}
       scale={0.25}
       style={{
-        fontSize: 40,
-        fill: isActive ? '#FFFFFF' : '#000000'
+        fontFamily: 'boothDefault',
+        fontSize: 40
       }}
+      tint={isActive ? '#FFFFFF' : '#000000'}
     />
   ));
 }

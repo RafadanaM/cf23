@@ -1,7 +1,8 @@
-import { Text, Texture } from 'pixi.js';
+import { BitmapText, Texture } from 'pixi.js';
 
 import { useCircle } from '@/domain/circle/contexts/CircleProvider';
 
+import { memo } from 'react';
 import { useCircleFilter } from '../contexts/CircleFilterProvider';
 import useRectangleTextures from '../hooks/useRectangleTextures';
 import useTextVisibility from '../hooks/useTextVisibility';
@@ -9,7 +10,7 @@ import BoothRectangles from './BoothRectangles';
 
 interface BoothsProps {
   getRectangleTexture: (width: number, height: number) => Texture | undefined;
-  registerTextRef?: (node: Text | null) => void;
+  registerTextRef?: (node: BitmapText | null) => void;
 }
 
 function AllBooths() {
@@ -18,16 +19,16 @@ function AllBooths() {
   const { getTexture } = useRectangleTextures();
 
   return (
-    <>
+    <pixiContainer>
       <BoothDaysBooths registerTextRef={registerRef} getRectangleTexture={getTexture} />
       <EachDayBooths registerTextRef={registerRef} getRectangleTexture={getTexture} />
-    </>
+    </pixiContainer>
   );
 }
 
 export default AllBooths;
 
-function BoothDaysBooths({ registerTextRef, getRectangleTexture }: BoothsProps) {
+const BoothDaysBooths = memo(({ registerTextRef, getRectangleTexture }: BoothsProps) => {
   const { bothDaysCircles } = useCircle();
 
   return (
@@ -37,9 +38,9 @@ function BoothDaysBooths({ registerTextRef, getRectangleTexture }: BoothsProps) 
       registerTextRef={registerTextRef}
     />
   );
-}
+});
 
-function EachDayBooths({ registerTextRef, getRectangleTexture }: BoothsProps) {
+const EachDayBooths = memo(({ registerTextRef, getRectangleTexture }: BoothsProps) => {
   const { attendingDay } = useCircleFilter();
 
   return attendingDay === 'SAT' ? (
@@ -53,9 +54,9 @@ function EachDayBooths({ registerTextRef, getRectangleTexture }: BoothsProps) {
       getRectangleTexture={getRectangleTexture}
     />
   );
-}
+});
 
-function DayOneBooths({ registerTextRef, getRectangleTexture }: BoothsProps) {
+const DayOneBooths = memo(({ registerTextRef, getRectangleTexture }: BoothsProps) => {
   const { dayOneCircles } = useCircle();
 
   return (
@@ -65,9 +66,9 @@ function DayOneBooths({ registerTextRef, getRectangleTexture }: BoothsProps) {
       registerTextRef={registerTextRef}
     />
   );
-}
+});
 
-function DayTwoBooths({ registerTextRef, getRectangleTexture }: BoothsProps) {
+const DayTwoBooths = memo(({ registerTextRef, getRectangleTexture }: BoothsProps) => {
   const { dayTwoCircles } = useCircle();
 
   return (
@@ -77,4 +78,4 @@ function DayTwoBooths({ registerTextRef, getRectangleTexture }: BoothsProps) {
       registerTextRef={registerTextRef}
     />
   );
-}
+});

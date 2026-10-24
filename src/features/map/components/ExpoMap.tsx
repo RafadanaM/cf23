@@ -2,6 +2,7 @@ import { Application, extend } from '@pixi/react';
 import { Viewport as PixiViewport } from 'pixi-viewport';
 import {
   Assets,
+  BitmapText,
   Container,
   Graphics,
   loadTextures,
@@ -18,7 +19,7 @@ import MapContent from './MapContent';
 import MapLoader from './MapLoader';
 import Tooltips from './Tooltips';
 
-extend({ Viewport: PixiViewport, Sprite, Container, Graphics, Text });
+extend({ Viewport: PixiViewport, Sprite, Container, Graphics, Text, BitmapText });
 
 loadTextures.config = {
   preferWorkers: false,
