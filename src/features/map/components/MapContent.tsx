@@ -1,6 +1,6 @@
 import { useApplication } from '@pixi/react';
-import { Texture } from 'pixi.js';
-import { memo } from 'react';
+import { Assets, Texture } from 'pixi.js';
+import { memo, useEffect, useState } from 'react';
 
 import { useMapRegistry } from '@/features/map/contexts/MapProvider';
 
@@ -10,11 +10,7 @@ import AllBooths from './AllBooths';
 import BadAppleRenderer from './BadAppleRenderer';
 import BookmarkedBooths from './BookmarkedBooths';
 
-interface MapContentProps {
-  bg: Texture | null;
-}
-
-function MapContent({ bg }: MapContentProps) {
+function MapContent() {
   const { app } = useApplication();
   const { register } = useMapRegistry();
 
@@ -26,7 +22,7 @@ function MapContent({ bg }: MapContentProps) {
       events={app.renderer.events}
       threshold={10}
     >
-      <Background bg={bg} />
+      <Background />
       <AllBooths />
       <BookmarkedBooths />
       <ActiveBooth />
@@ -37,11 +33,19 @@ function MapContent({ bg }: MapContentProps) {
 
 export default memo(MapContent);
 
-interface BackgroundProps {
-  bg: Texture | null;
-}
+function Background() {
+  const [bg, setBg] = useState<Texture | null>(null);
 
-function Background({ bg }: BackgroundProps) {
+  useEffect(() => {
+    Assets.load('/floor_map_clean.webp')
+      .then((texture) => {
+        setBg(texture);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }, []);
+
   if (!bg) return null;
 
   return <pixiSprite texture={bg} height={MAP_HEIGHT} width={MAP_WIDTH} />;
