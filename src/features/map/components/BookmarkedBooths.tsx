@@ -33,9 +33,9 @@ function BookmarkedBooths() {
   );
 
   useHandleMapMove(renderedItems);
-  const { getTexture } = useRectangleTextures({ isBookmarked: true });
+  const { getTexture, isReady } = useRectangleTextures({ isBookmarked: true });
 
-  if (renderedItems.length === 0 || status !== 'success') return null;
+  if (renderedItems.length === 0 || status !== 'success' || !isReady) return null;
 
   return (
     <BoothRectangles

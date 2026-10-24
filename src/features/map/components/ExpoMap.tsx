@@ -35,9 +35,7 @@ function ExpoMap() {
   useEffect(() => {
     Assets.load('/floor_map_clean.webp')
       .then((texture) => {
-        startTransition(() => {
-          setBg(texture);
-        });
+        setBg(texture);
       })
       .catch((e) => {
         console.error(e);
@@ -45,7 +43,9 @@ function ExpoMap() {
   }, []);
 
   const handleInit = useCallback(() => {
-    setReady(true);
+    startTransition(() => {
+      setReady(true);
+    });
   }, []);
 
   return (
@@ -63,7 +63,8 @@ function ExpoMap() {
           resizeTo={window}
           onInit={handleInit}
           resolution={window.devicePixelRatio}
-          roundPixels
+          antialias={false}
+          backgroundAlpha={1}
         >
           {ready && <MapContent bg={bg} />}
         </Application>

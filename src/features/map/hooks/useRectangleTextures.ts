@@ -1,6 +1,6 @@
 import { useApplication } from '@pixi/react';
 import { Graphics, Texture } from 'pixi.js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { startTransition, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useCircle } from '@/domain/circle/contexts/CircleProvider';
 
@@ -59,7 +59,9 @@ function useRectangleTextures(config?: Config) {
       textureVariants.set(key, texture);
     }
 
-    setTextures(textureVariants);
+    startTransition(() => {
+      setTextures(textureVariants);
+    });
 
     return () => {
       textureVariants.forEach((texture) => texture.destroy());
@@ -68,9 +70,10 @@ function useRectangleTextures(config?: Config) {
 
   return useMemo(
     () => ({
-      getTexture
+      getTexture,
+      isReady: textures.size
     }),
-    [getTexture]
+    [getTexture, textures]
   );
 }
 

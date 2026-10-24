@@ -16,7 +16,9 @@ interface BoothsProps {
 function AllBooths() {
   const { registerRef } = useTextVisibility();
 
-  const { getTexture } = useRectangleTextures();
+  const { getTexture, isReady } = useRectangleTextures();
+
+  if (!isReady) return null;
 
   return (
     <>

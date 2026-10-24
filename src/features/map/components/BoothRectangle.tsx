@@ -79,10 +79,6 @@ function BoothRectangle({
 export default BoothRectangle;
 
 export function useBoothRectangle() {
-  const { openDrawer } = useAppDrawer();
-  const { setActiveCircleId } = useActiveCircleAction();
-  const { map } = useMapRegistry();
-
   const createBoothRectangle = useCallback(
     ({
       texture,
@@ -91,22 +87,6 @@ export function useBoothRectangle() {
       isActive = false,
       isBookmarked = false
     }: BoothRectangleProps) => {
-      const mapInstance = map.current;
-      const colorConfig = getColorConfig(isActive, isBookmarked);
-
-      function handleClick() {
-        setActiveCircleId(circle.id);
-        startTransition(() => {
-          openDrawer(APP_DRAWER_ID.CIRCLE_DETAIL, {
-            circle,
-            hideOverlay: true,
-            onClose: () => {
-              setActiveCircleId('');
-            }
-          });
-        });
-      }
-
       const sprite = new Sprite({
         texture
       });
@@ -138,18 +118,7 @@ export function useBoothRectangle() {
         cursor: 'pointer'
       });
 
-      container.on('pointertap', () => {
-        if (mapInstance?.moving) return;
-        handleClick();
-      });
-
-      container.on('pointerenter', () => {
-        sprite.tint = colorConfig;
-      });
-
-      container.on('pointerleave', () => {
-        sprite.tint = '#FFFFFF';
-      });
+      container.label = circle.id;
 
       container.addChild(sprite, ...texts);
 
@@ -159,7 +128,7 @@ export function useBoothRectangle() {
 
       return container;
     },
-    [openDrawer, setActiveCircleId, map]
+    []
   );
 
   return useMemo(() => ({ createBoothRectangle }), [createBoothRectangle]);
@@ -241,7 +210,7 @@ function getFraction(idx: number, total: number, offset = 1) {
   return center + (standard - center) * offset;
 }
 
-function getColorConfig(isActive: boolean, isBookmarked: boolean) {
+export function getColorConfig(isActive: boolean, isBookmarked: boolean) {
   if (isActive) {
     return '#003b84';
   }
