@@ -8,26 +8,23 @@ import { useCircleFilter } from '../contexts/CircleFilterProvider';
 import { useHighlightBookmarkedCircles } from '../contexts/HighlightBookmarkedCircleProvider';
 import { useMapRegistry } from '../contexts/MapProvider';
 import { useTooltip } from '../contexts/TooltipProvider';
-import BoothRectangle from './BoothRectangle';
+import useRectangleTextures from '../hooks/useRectangleTextures';
+import BoothRectangles from './BoothRectangles';
 
 function BookmarkedBooths() {
   const { getCircleDetail } = useCircle();
   const { bookmarks } = useBookmarkList();
   const { status } = useCircle();
-  const { map } = useMapRegistry();
-
-  const { updateCoord } = useTooltip();
 
   const { attendingDay } = useCircleFilter();
-  const { highlightBookmarkedCircles } = useHighlightBookmarkedCircles();
 
   const renderedItems = useMemo(
     () =>
-      bookmarks.reduce<{ circle: Circle; isCompleted: boolean }[]>((acc, curr) => {
+      bookmarks.reduce<Circle[]>((acc, curr) => {
         const circle = getCircleDetail(curr.id);
 
         if (circle?.attendingDays.includes(attendingDay)) {
-          acc.push({ circle, isCompleted: curr.isComplete });
+          acc.push(circle);
         }
 
         return acc;
@@ -35,19 +32,41 @@ function BookmarkedBooths() {
     [getCircleDetail, bookmarks, attendingDay]
   );
 
+  useHandleMapMove(renderedItems);
+  const { getTexture } = useRectangleTextures({ isBookmarked: true });
+
+  if (renderedItems.length === 0 || status !== 'success') return null;
+
+  return (
+    <BoothRectangles
+      getRectangleTexture={getTexture}
+      circles={renderedItems}
+      isBookmarked
+    />
+  );
+}
+
+export default BookmarkedBooths;
+
+function useHandleMapMove(renderedItems: Circle[]) {
+  const { map } = useMapRegistry();
+
+  const { updateCoord } = useTooltip();
+  const { highlightBookmarkedCircles } = useHighlightBookmarkedCircles();
+
   useEffect(() => {
     const mapInstance = map.current;
 
-    if (!mapInstance || !highlightBookmarkedCircles) return;
+    if (!mapInstance || !highlightBookmarkedCircles || renderedItems.length === 0) return;
 
     function update() {
       renderedItems.forEach((item) => {
         const screenPoint = mapInstance!.toScreen(
-          item.circle.rect.x + item.circle.rect.width / 2,
-          item.circle.rect.y
+          item.rect.x + item.rect.width / 2,
+          item.rect.y + item.rect.height / 2
         );
 
-        updateCoord(item.circle.id, { x: screenPoint.x, y: screenPoint.y });
+        updateCoord(item.id, { x: screenPoint.x, y: screenPoint.y });
       });
     }
 
@@ -59,12 +78,4 @@ function BookmarkedBooths() {
       mapInstance.off('moved', update);
     };
   }, [map, updateCoord, renderedItems, highlightBookmarkedCircles]);
-
-  if (renderedItems.length === 0 || status !== 'success') return null;
-
-  return renderedItems.map(({ circle }) => (
-    <BoothRectangle key={circle.id} circle={circle} isBookmarked />
-  ));
 }
-
-export default BookmarkedBooths;

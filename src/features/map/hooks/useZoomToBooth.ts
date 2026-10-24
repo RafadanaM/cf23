@@ -59,7 +59,7 @@ function useZoomToBooth() {
 
       await zoomToPoint({
         x: circle.rect.x,
-        y: circle.rect.y + (circle.id === BAD_APPLE_ID ? 0 : -150)
+        y: circle.rect.y + (circle.id === BAD_APPLE_ID ? 0 : 150)
       });
 
       // open circle detail drawer

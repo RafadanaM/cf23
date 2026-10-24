@@ -1,4 +1,4 @@
-import { Text } from 'pixi.js';
+import { Text, Texture } from 'pixi.js';
 import { startTransition, useState } from 'react';
 
 import { Circle } from '@/domain/circle/types';
@@ -10,6 +10,7 @@ import { useMapRegistry } from '../contexts/MapProvider';
 
 interface BoothRectangleProps {
   circle: Circle;
+  texture: Texture;
   isActive?: boolean;
   isBookmarked?: boolean;
   registerTextRef?: (node: Text | null) => void;
@@ -17,6 +18,7 @@ interface BoothRectangleProps {
 
 function BoothRectangle({
   circle,
+  texture,
   isActive = false,
   isBookmarked = false,
 
@@ -55,20 +57,7 @@ function BoothRectangle({
       cursor="pointer"
       cullable
     >
-      <pixiGraphics
-        draw={(g) => {
-          g.clear();
-          const fillColor = hover
-            ? colorConfig.backgroundColorHover
-            : colorConfig.backgroundColor;
-          const fillAlpha = isActive || isBookmarked ? 1 : 0.25;
-          const strokeColor = colorConfig.borderColor;
-
-          g.rect(0, 0, circle.rect.width, circle.rect.height);
-          g.fill({ color: fillColor, alpha: fillAlpha });
-          g.stroke({ width: 2, color: strokeColor });
-        }}
-      />
+      <pixiSprite texture={texture} tint={hover ? colorConfig : undefined} />
       <BoothText
         circle={circle}
         isActive={isActive || isBookmarked}
@@ -157,24 +146,12 @@ function getFraction(idx: number, total: number, offset = 1) {
 
 function getColorConfig(isActive: boolean, isBookmarked: boolean) {
   if (isActive) {
-    return {
-      backgroundColor: '#214da9',
-      borderColor: '#003b84',
-      backgroundColorHover: '#214da9'
-    };
+    return '#003b84';
   }
 
   if (isBookmarked) {
-    return {
-      backgroundColor: '#4061a8',
-      borderColor: '#214da9',
-      backgroundColorHover: '#214da9'
-    };
+    return '#214da9';
   }
 
-  return {
-    backgroundColor: '#ccd8eb',
-    borderColor: '#729fe8',
-    backgroundColorHover: '#a1bbe3'
-  };
+  return '#729fe8';
 }

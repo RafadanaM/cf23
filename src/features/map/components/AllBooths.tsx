@@ -1,119 +1,80 @@
+import { Text, Texture } from 'pixi.js';
+
 import { useCircle } from '@/domain/circle/contexts/CircleProvider';
 
-import { Text } from 'pixi.js';
-import { useCallback, useEffect, useRef } from 'react';
 import { useCircleFilter } from '../contexts/CircleFilterProvider';
-import { useMapRegistry } from '../contexts/MapProvider';
-import BoothRectangle from './BoothRectangle';
+import useRectangleTextures from '../hooks/useRectangleTextures';
+import useTextVisibility from '../hooks/useTextVisibility';
+import BoothRectangles from './BoothRectangles';
 
 interface BoothsProps {
+  getRectangleTexture: (width: number, height: number) => Texture | undefined;
   registerTextRef?: (node: Text | null) => void;
 }
 
 function AllBooths() {
-  const { map } = useMapRegistry();
+  const { registerRef } = useTextVisibility();
 
-  const texts = useRef<Text[]>([]);
-
-  const registerRef = useCallback((textNode: Text | null) => {
-    if (!textNode) return;
-    texts.current.push(textNode);
-  }, []);
-
-  useEffect(() => {
-    const mapInstance = map.current;
-    if (!mapInstance) return;
-
-    handleZoom();
-    function handleZoom() {
-      const scale = mapInstance?.scaled || 0;
-
-      if (scale > 0.6) {
-        texts.current.forEach((text) => {
-          if (!text.visible) {
-            text.visible = true;
-          }
-        });
-      } else {
-        texts.current.forEach((text) => {
-          if (text.visible) {
-            text.visible = false;
-          }
-        });
-      }
-    }
-
-    mapInstance.on('zoomed', handleZoom);
-
-    return () => {
-      mapInstance.off('zoomed', handleZoom);
-    };
-  }, [map]);
+  const { getTexture } = useRectangleTextures();
 
   return (
     <>
-      <BoothDaysBooths registerTextRef={registerRef} />
-      <EachDayBooths registerTextRef={registerRef} />
+      <BoothDaysBooths registerTextRef={registerRef} getRectangleTexture={getTexture} />
+      <EachDayBooths registerTextRef={registerRef} getRectangleTexture={getTexture} />
     </>
   );
 }
 
 export default AllBooths;
 
-function BoothDaysBooths({ registerTextRef }: BoothsProps) {
+function BoothDaysBooths({ registerTextRef, getRectangleTexture }: BoothsProps) {
   const { bothDaysCircles } = useCircle();
 
   return (
-    <pixiContainer>
-      {bothDaysCircles.map((circle) => (
-        <BoothRectangle
-          key={circle.id}
-          circle={circle}
-          registerTextRef={registerTextRef}
-        />
-      ))}
-    </pixiContainer>
+    <BoothRectangles
+      circles={bothDaysCircles}
+      getRectangleTexture={getRectangleTexture}
+      registerTextRef={registerTextRef}
+    />
   );
 }
 
-function EachDayBooths({ registerTextRef }: BoothsProps) {
+function EachDayBooths({ registerTextRef, getRectangleTexture }: BoothsProps) {
   const { attendingDay } = useCircleFilter();
 
   return attendingDay === 'SAT' ? (
-    <DayOneBooths registerTextRef={registerTextRef} />
+    <DayOneBooths
+      registerTextRef={registerTextRef}
+      getRectangleTexture={getRectangleTexture}
+    />
   ) : (
-    <DayTwoBooths registerTextRef={registerTextRef} />
+    <DayTwoBooths
+      registerTextRef={registerTextRef}
+      getRectangleTexture={getRectangleTexture}
+    />
   );
 }
 
-function DayOneBooths({ registerTextRef }: BoothsProps) {
+function DayOneBooths({ registerTextRef, getRectangleTexture }: BoothsProps) {
   const { dayOneCircles } = useCircle();
 
   return (
-    <pixiContainer>
-      {dayOneCircles.map((circle) => (
-        <BoothRectangle
-          key={circle.id}
-          circle={circle}
-          registerTextRef={registerTextRef}
-        />
-      ))}
-    </pixiContainer>
+    <BoothRectangles
+      circles={dayOneCircles}
+      getRectangleTexture={getRectangleTexture}
+      registerTextRef={registerTextRef}
+    />
   );
 }
 
-function DayTwoBooths({ registerTextRef }: BoothsProps) {
+function DayTwoBooths({ registerTextRef, getRectangleTexture }: BoothsProps) {
   const { dayTwoCircles } = useCircle();
 
   return (
-    <pixiContainer>
-      {dayTwoCircles.map((circle) => (
-        <BoothRectangle
-          key={circle.id}
-          circle={circle}
-          registerTextRef={registerTextRef}
-        />
-      ))}
-    </pixiContainer>
+    <BoothRectangles
+      circles={dayTwoCircles}
+      getRectangleTexture={getRectangleTexture}
+      registerTextRef={registerTextRef}
+    />
   );
 }

@@ -1,5 +1,4 @@
 import { Viewport } from 'pixi-viewport';
-
 import {
   createContext,
   PropsWithChildren,
@@ -9,6 +8,7 @@ import {
   useMemo,
   useRef
 } from 'react';
+
 import { MAP_HEIGHT, MAP_WIDTH } from '../constants/map';
 
 type MapRegistryContextValue = {
@@ -77,7 +77,7 @@ function MapProvider({ children }: PropsWithChildren<{}>) {
       })
       .clampZoom({
         maxScale: 3,
-        minScale: 0.25
+        minScale: 0.5
       })
       .clamp({
         direction: 'all'
