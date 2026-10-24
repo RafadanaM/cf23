@@ -16,6 +16,7 @@ BitmapFont.install({
 });
 
 interface BoothRectangleProps {
+  zIndex?: number;
   circle: Circle;
   texture: Texture;
   isActive?: boolean;
@@ -28,6 +29,7 @@ function BoothRectangle({
   texture,
   isActive = false,
   isBookmarked = false,
+  zIndex = 1,
 
   registerTextRef
 }: BoothRectangleProps) {
@@ -62,7 +64,7 @@ function BoothRectangle({
       onPointerEnter={() => setHover(true)}
       onPointerLeave={() => setHover(false)}
       cursor="pointer"
-      cullable
+      zIndex={zIndex}
     >
       <pixiSprite texture={texture} tint={hover ? colorConfig : undefined} />
       <BoothText

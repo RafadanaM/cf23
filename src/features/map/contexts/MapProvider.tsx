@@ -85,6 +85,8 @@ function MapProvider({ children }: PropsWithChildren<{}>) {
       .moveCenter(MAP_WIDTH / 2, MAP_HEIGHT / 2)
       .setZoom(1, true);
 
+    map.sortableChildren = true;
+
     const observer = new ResizeObserver(([entry]) => {
       if (!entry) return;
 

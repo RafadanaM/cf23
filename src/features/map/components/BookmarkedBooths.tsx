@@ -38,13 +38,12 @@ function BookmarkedBooths() {
   if (renderedItems.length === 0 || status !== 'success') return null;
 
   return (
-    <pixiContainer>
-      <BoothRectangles
-        getRectangleTexture={getTexture}
-        circles={renderedItems}
-        isBookmarked
-      />
-    </pixiContainer>
+    <BoothRectangles
+      zIndex={5}
+      getRectangleTexture={getTexture}
+      circles={renderedItems}
+      isBookmarked
+    />
   );
 }
 

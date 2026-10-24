@@ -21,7 +21,7 @@ function ActiveBooth() {
 
   if (!texture) return;
 
-  return <BoothRectangle circle={circle} isActive texture={texture} />;
+  return <BoothRectangle circle={circle} isActive texture={texture} zIndex={5} />;
 }
 
 export default ActiveBooth;

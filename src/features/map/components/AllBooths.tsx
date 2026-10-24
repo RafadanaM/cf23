@@ -19,10 +19,10 @@ function AllBooths() {
   const { getTexture } = useRectangleTextures();
 
   return (
-    <pixiContainer>
+    <>
       <BoothDaysBooths registerTextRef={registerRef} getRectangleTexture={getTexture} />
       <EachDayBooths registerTextRef={registerRef} getRectangleTexture={getTexture} />
-    </pixiContainer>
+    </>
   );
 }
 

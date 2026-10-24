@@ -10,7 +10,7 @@ import {
   Text,
   Texture
 } from 'pixi.js';
-import { useCallback, useEffect, useState } from 'react';
+import { startTransition, useCallback, useEffect, useState } from 'react';
 
 import TooltipProvider from '../contexts/TooltipProvider';
 import BadAppleAudio from './BadAppleAudio';
@@ -35,7 +35,9 @@ function ExpoMap() {
   useEffect(() => {
     Assets.load('/floor_map_clean.webp')
       .then((texture) => {
-        setBg(texture);
+        startTransition(() => {
+          setBg(texture);
+        });
       })
       .catch((e) => {
         console.error(e);

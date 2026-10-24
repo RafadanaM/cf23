@@ -155,6 +155,8 @@ function createRectangles(
 
     const rectangle = new Graphics();
 
+    rectangle.zIndex = 10;
+
     drawRectangle({
       graphics: rectangle,
       height: height,

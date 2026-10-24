@@ -3,19 +3,25 @@ import { memo, useEffect } from 'react';
 
 import { Circle } from '@/domain/circle/types';
 
+import { Viewport } from 'pixi-viewport';
+import { yieldToMain } from '@/core/utils/scheduler';
 import { useMapRegistry } from '../contexts/MapProvider';
 import { useBoothRectangle } from './BoothRectangle';
 
 interface BoothRectanglesProps {
+  zIndex?: number;
   circles: Circle[];
   getRectangleTexture: (width: number, height: number) => Texture | undefined;
   isBookmarked?: boolean;
   registerTextRef?: (node: BitmapText | null) => void;
 }
 
+const MAX_TIME_MS = 10;
+
 function BoothRectangles({
   circles,
   isBookmarked,
+  zIndex = 1,
   getRectangleTexture,
   registerTextRef
 }: BoothRectanglesProps) {
@@ -24,31 +30,46 @@ function BoothRectangles({
   const { createBoothRectangle } = useBoothRectangle();
 
   useEffect(() => {
+    let cancelled = false;
     const mapInstance = map.current;
     if (!mapInstance) return;
 
-    performance.mark('START_RECT');
-    const boothRectangles = circles
-      .filter((c) => !!getRectangleTexture(c.rect.width, c.rect.height))
-      .map((circle) => {
-        return createBoothRectangle({
-          circle,
-          texture: getRectangleTexture(circle.rect.width, circle.rect.height)!,
-          registerTextRef,
-          isBookmarked
-        });
-      });
-
-    if (boothRectangles.length === 0) return;
-
     const container = new Container();
-    for (const rect of boothRectangles) {
-      container.addChild(rect);
+
+    container.zIndex = zIndex;
+
+    async function chunkInsert(mapNode: Viewport) {
+      let start = performance.now();
+
+      for (const circle of circles) {
+        if (cancelled) return;
+
+        const texture = getRectangleTexture(circle.rect.width, circle.rect.height);
+
+        if (!texture) continue;
+
+        container.addChild(
+          createBoothRectangle({
+            circle,
+            texture: texture,
+            registerTextRef,
+            isBookmarked
+          })
+        );
+
+        if (performance.now() - start > MAX_TIME_MS) {
+          performance.mark('YIELD');
+          await yieldToMain();
+          start = performance.now();
+        }
+      }
+      mapNode.addChild(container);
     }
-    mapInstance.addChild(container);
-    performance.mark('END_RECT');
+
+    chunkInsert(mapInstance);
 
     return () => {
+      cancelled = true;
       container.parent?.removeChild(container);
       container.destroy({ children: true });
     };
@@ -58,7 +79,8 @@ function BoothRectangles({
     circles,
     isBookmarked,
     registerTextRef,
-    map
+    map,
+    zIndex
   ]);
 
   return null;
