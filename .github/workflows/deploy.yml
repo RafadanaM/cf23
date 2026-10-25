@@ -28,7 +28,7 @@ jobs:
       - name: Sync Static Site
         uses: burnett01/rsync-deployments@7.0.0
         with:
-          switches: -avz
+          switches: -avz --delete
           path: .output/public/
           remote_path: /var/www/cf23
           remote_host: ${{ secrets.HOST }}
