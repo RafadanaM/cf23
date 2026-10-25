@@ -1,5 +1,16 @@
 import { animate, motion, PanInfo, useDragControls, useMotionValue } from 'motion/react';
-import { PropsWithChildren, useCallback, PointerEvent, CSSProperties } from 'react';
+import {
+  PropsWithChildren,
+  useCallback,
+  PointerEvent,
+  CSSProperties,
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  startTransition
+} from 'react';
+import { throttle } from '@/core/utils/scheduler';
 import { cn } from '../../utils';
 
 interface DrawerProps {
@@ -103,15 +114,81 @@ interface DrawerBodyProps {
 }
 
 function DrawerBody({ className, style, children }: PropsWithChildren<DrawerBodyProps>) {
+  const divRef = useRef<HTMLDivElement | null>(null);
+  const [isOverflow, setIsOverflow] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState<'START' | 'MIDDLE' | 'END'>(
+    'START'
+  );
+
+  useEffect(() => {
+    const div = divRef.current;
+    if (!div) return;
+    const divOverflow = div.scrollHeight > div.clientHeight;
+
+    startTransition(() => {
+      setIsOverflow(divOverflow);
+    });
+
+    if (divOverflow) {
+      startTransition(() => {
+        setScrollPosition('START');
+      });
+    }
+  }, []);
+
+  const handleScroll = useMemo(() => {
+    // oxlint-disable-next-line react/refs
+    return throttle(() => {
+      const scrollTop = divRef?.current?.scrollTop || 0;
+
+      if (scrollTop <= 1) {
+        startTransition(() => {
+          setScrollPosition('START');
+        });
+        return;
+      }
+      const scrollHeight = divRef.current?.scrollHeight || 0;
+      const clientHeight = divRef.current?.clientHeight || 0;
+
+      const hasReachedEnd = Math.abs(scrollHeight - (scrollTop + clientHeight)) <= 1;
+
+      startTransition(() => {
+        setScrollPosition(hasReachedEnd ? 'END' : 'MIDDLE');
+        return;
+      });
+    }, 150);
+  }, []);
+
   return (
-    <div
-      className={cn(
-        'flex items-stretch flex-col overflow-y-auto w-full px-4 py-2',
-        className
-      )}
-      style={style}
-    >
-      {children}
+    <div className="relative flex-1 min-h-0 flex flex-col">
+      <div
+        aria-hidden="true"
+        role="presentation"
+        className={cn(
+          'absolute top-0 left-0 w-full h-3 pointer-events-none transition-opacity duration-200 bg-linear-to-b from-card-foreground/15',
+          scrollPosition === 'START' || !isOverflow ? 'opacity-0' : 'opacity-100'
+        )}
+      />
+      <div
+        ref={divRef}
+        onScroll={isOverflow ? handleScroll : undefined}
+        className={cn(
+          'flex overflow-y-auto items-stretch flex-col w-full px-4 py-2',
+          className
+        )}
+        style={style}
+      >
+        {children}
+        <div />
+      </div>
+      <div
+        aria-hidden="true"
+        role="presentation"
+        className={cn(
+          'absolute bottom-0 left-0 w-full h-3 pointer-events-none transition-opacity duration-200 bg-linear-to-t from-card-foreground/15',
+          scrollPosition === 'END' || !isOverflow ? 'opacity-0' : 'opacity-100'
+        )}
+      />
     </div>
   );
 }

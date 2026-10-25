@@ -22,7 +22,7 @@ export async function yieldToMain(options?: SchedulerPostTaskOptions) {
 }
 
 // oxlint-disable-next-line typescript/no-explicit-any
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: any[]) => unknown>(
   fn: T,
   delay: number = 250
 ): (...args: Parameters<T>) => void {
@@ -37,5 +37,32 @@ export function debounce<T extends (...args: any[]) => any>(
       fn.apply(this, args);
       timeoutId = null;
     }, delay);
+  };
+}
+
+// oxlint-disable-next-line typescript/no-explicit-any
+export function throttle<T extends (...args: any[]) => void>(fn: T, delay = 250) {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  let lastArgs: Parameters<T> | null = null;
+
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>): void {
+    if (timer) {
+      lastArgs = args;
+      return;
+    }
+
+    fn.apply(this, args);
+
+    const schedule = () => {
+      if (lastArgs) {
+        fn.apply(this, lastArgs);
+        lastArgs = null;
+        timer = setTimeout(schedule, delay);
+      } else {
+        timer = null;
+      }
+    };
+
+    timer = setTimeout(schedule, delay);
   };
 }
