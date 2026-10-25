@@ -22,7 +22,7 @@ const serwist = new Serwist({
     cleanupOutdatedCaches: true,
     concurrency: 10,
     cleanURLs: true,
-    cacheName: 'cf-23-precache'
+    cacheName: 'cf-23-precache-v2'
   },
 
   fallbacks: {
@@ -40,7 +40,7 @@ const serwist = new Serwist({
 
   disableDevLogs: process.env.NODE_ENV === 'production',
   // cache
-  cacheId: 'cf23-cache',
+  cacheId: 'cf23-cache-v2',
 
   // runtime cache
   runtimeCaching: (() => {
@@ -48,7 +48,7 @@ const serwist = new Serwist({
       {
         matcher: ({ url }) => url.pathname.includes('/api/v1/circles'),
         handler: new StaleWhileRevalidate({
-          cacheName: 'circles-response-cache',
+          cacheName: 'circles-response-cache-v2',
           plugins: [
             new CacheableResponsePlugin({
               statuses: [200]
