@@ -22,7 +22,7 @@ const serwist = new Serwist({
     cleanupOutdatedCaches: true,
     concurrency: 10,
     cleanURLs: true,
-    cacheName: 'cf-23-precache-v2'
+    cacheName: 'cf-23-precache-v3'
   },
 
   fallbacks: {
@@ -40,7 +40,7 @@ const serwist = new Serwist({
 
   disableDevLogs: process.env.NODE_ENV === 'production',
   // cache
-  cacheId: 'cf23-cache-v2',
+  cacheId: 'cf23-cache-v3',
 
   // runtime cache
   runtimeCaching: (() => {

@@ -87,7 +87,7 @@ function ExpoMap() {
         aria-labelledby="tab-MAP"
         className="relative w-screen h-screen overflow-hidden cursor-grab active:cursor-grabbing"
       >
-        {(!ready || !bg) && <MapLoader className="fixed top-0 left-0" />}
+        {(!bg || !ready) && <MapLoader className="fixed top-0 left-0" />}
         <Application
           background={'#ffffff'}
           autoDensity
