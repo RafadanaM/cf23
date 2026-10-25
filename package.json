@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "bun --bun vite dev --port 3000",
     "start": "bun run .output/server/index.mjs",
-    "build": "bun --bun vite build && bun --bun ./src/buildSw.ts",
+    "build": "rm -rf .output && bun --bun vite build && bun --bun ./src/buildSw.ts",
     "preview": "bun --bun  vite preview",
     "test": "bun --bun vitest run",
     "lint": "oxlint",
