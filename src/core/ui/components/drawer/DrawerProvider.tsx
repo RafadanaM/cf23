@@ -68,7 +68,9 @@ function DrawerProvider<Id extends DrawerId, Components extends DrawerComponents
   const currentHash = hash;
 
   useEffect(() => {
-    setMounted(true);
+    startTransition(() => {
+      setMounted(true);
+    });
   }, []);
 
   const drawerIds = useMemo(() => {

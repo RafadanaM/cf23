@@ -9,7 +9,7 @@ import {
   RiTwitterXLine,
   RiYoutubeLine
 } from '@remixicon/react';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, startTransition, useEffect, useState } from 'react';
 
 import { Badge } from '@/core/ui/components/badge';
 import { Button } from '@/core/ui/components/button';
@@ -166,6 +166,8 @@ interface SampleWorksProps {
 function SampleWorks({ sampleWorkThumbnails, sampleWorks }: SampleWorksProps) {
   const { openDrawer } = useAppDrawer();
 
+  const [isReady, setIsReady] = useState(false);
+
   const handleClick = (idx: number) => {
     openDrawer('SAMPLE_WORKS', {
       hideOverlay: true,
@@ -174,6 +176,13 @@ function SampleWorks({ sampleWorkThumbnails, sampleWorks }: SampleWorksProps) {
       startingItemKey: String(idx)
     });
   };
+
+  // some images are heavy, opening may lag on lower end devices
+  useEffect(() => {
+    startTransition(() => {
+      setIsReady(true);
+    });
+  }, []);
 
   return (
     <ul
@@ -189,14 +198,18 @@ function SampleWorks({ sampleWorkThumbnails, sampleWorks }: SampleWorksProps) {
             className="block cursor-pointer"
             aria-label={`sample work ${idx + 1}`}
           >
-            <img
-              src={sampleWorkUrl}
-              alt={`sample work ${idx + 1}`}
-              loading="lazy"
-              className="rounded-md border-primary border-2  size-16 object-cover hover:brightness-75 active:brightness-75"
-              width={64}
-              height={64}
-            />
+            {isReady ? (
+              <img
+                src={sampleWorkUrl}
+                alt={`sample work ${idx + 1}`}
+                loading="lazy"
+                className="rounded-md border-primary border-2  size-16 object-cover hover:brightness-75 active:brightness-75"
+                width={64}
+                height={64}
+              />
+            ) : (
+              <div className="rounded-md border-primary border-2  size-16 object-cover hover:brightness-75 active:brightness-75" />
+            )}
           </button>
         </li>
       ))}

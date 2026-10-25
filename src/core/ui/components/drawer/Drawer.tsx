@@ -55,7 +55,7 @@ function DrawerContainer({
     <motion.div
       layoutId={layoutId}
       layout={layoutId ? 'position' : undefined}
-      className="flex flex-col bg-card pointer-events-auto fixed rounded-t-2xl bottom-0 left-0 right-0 max-h-[80vh] border-t border-border shadow-[5px_-4px_19px_5px_rgba(0,0,0,0.25)] md:right-auto md:left-1/2 md:-translate-x-1/2 md:w-md"
+      className="flex flex-col bg-card touch-none pointer-events-auto fixed rounded-t-2xl bottom-0 left-0 right-0 max-h-[80vh] border-t border-border shadow-[5px_-4px_19px_5px_rgba(0,0,0,0.25)] md:right-auto md:left-1/2 md:-translate-x-1/2 md:w-md will-change-transform"
       initial={{
         y: '100%'
       }}
@@ -121,21 +121,21 @@ function DrawerBody({ className, style, children }: PropsWithChildren<DrawerBody
   );
 
   useEffect(() => {
-    const div = divRef.current;
-    if (!div) return;
-    const divOverflow = div.scrollHeight > div.clientHeight;
+    const rafId = requestAnimationFrame(() => {
+      const div = divRef.current;
+      if (!div) return;
+      const divOverflow = div.scrollHeight > div.clientHeight;
 
-    startTransition(() => {
-      setIsOverflow(divOverflow);
+      startTransition(() => {
+        setIsOverflow(divOverflow);
+        if (divOverflow) setScrollPosition('START');
+      });
     });
 
-    if (divOverflow) {
-      startTransition(() => {
-        setScrollPosition('START');
-      });
-    }
+    return () => cancelAnimationFrame(rafId);
   }, []);
 
+  // can use raf as well but this should be fine
   const handleScroll = useMemo(() => {
     // oxlint-disable-next-line react/refs
     return throttle(() => {
