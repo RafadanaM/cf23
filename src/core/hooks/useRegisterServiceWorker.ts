@@ -1,21 +1,35 @@
-import { Serwist } from '@serwist/window';
+import { Serwist, SerwistLifecycleEvent } from '@serwist/window';
 import { useEffect } from 'react';
 
 function useRegisterServiceWorker() {
   useEffect(() => {
-    async function registerSW() {
-      if ('serviceWorker' in navigator) {
-        const serwist = new Serwist('/sw.js', { scope: '/', type: 'module' });
+    if (!('serviceWorker' in navigator)) return;
 
-        try {
-          await serwist.register();
-        } catch (e) {
-          console.error('[SERWIST] Failed to register service worker: ', e);
-        }
+    const serwist = new Serwist('/sw.js', { scope: '/', type: 'module' });
+
+    const onControlling = (event: SerwistLifecycleEvent) => {
+      if (event.isUpdate) {
+        window.location.reload();
       }
-    }
+    };
 
-    registerSW();
+    serwist.addEventListener('controlling', onControlling);
+
+    serwist.register().catch((e) => {
+      console.error('[SERWIST] Failed to register service worker: ', e);
+    });
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        serwist.update().catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+
+    return () => {
+      serwist.removeEventListener('controlling', onControlling);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
   }, []);
 }
 

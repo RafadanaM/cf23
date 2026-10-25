@@ -2,7 +2,6 @@ import type { PrecacheEntry, SerwistGlobalConfig, RuntimeCaching } from 'serwist
 import {
   CacheableResponsePlugin,
   ExpirationPlugin,
-  NetworkFirst,
   Serwist,
   StaleWhileRevalidate
 } from 'serwist';
@@ -63,26 +62,6 @@ const serwist = new Serwist({
       }
     ];
 
-    // cache index.html on runtime because tanstack start generates prerendered html later and I can't find a way to start the sw plugin after prerender
-    if (process.env.NODE_ENV === 'production') {
-      cachingArr.push({
-        matcher: ({ request }) => request.mode === 'navigate',
-        handler: new NetworkFirst({
-          cacheName: 'html-cache',
-          networkTimeoutSeconds: 3,
-          plugins: [
-            {
-              cacheWillUpdate: async ({ response }) => {
-                if (response && response.status === 200) {
-                  return response;
-                }
-                return null;
-              }
-            }
-          ]
-        })
-      });
-    }
     return cachingArr;
   })()
 });
