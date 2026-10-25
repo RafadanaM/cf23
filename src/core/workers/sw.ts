@@ -22,7 +22,7 @@ const serwist = new Serwist({
     cleanupOutdatedCaches: true,
     concurrency: 10,
     cleanURLs: true,
-    cacheName: 'cf-23-precache-v3'
+    cacheName: 'cf23-precache-v3'
   },
 
   fallbacks: {
