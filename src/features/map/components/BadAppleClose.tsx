@@ -4,12 +4,12 @@ import { Button } from '@/core/ui/components/button';
 import { useBadApple } from '../contexts/BadAppleProvider';
 
 function BadAppleClose() {
-  const { setPlay, setShow, show } = useBadApple();
+  const { setShow, show, pause } = useBadApple();
 
   if (!show) return null;
 
   const handleEnd = () => {
-    setPlay(false);
+    pause();
     setShow(false);
   };
 

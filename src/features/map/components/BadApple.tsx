@@ -21,7 +21,7 @@ const CENTER_Y = MAP_HEIGHT / 2;
 const CENTER_X = MAP_WIDTH / 2;
 
 function BadApple() {
-  const { setShow, setPlay } = useBadApple();
+  const { setShow, play, pause } = useBadApple();
   const { map } = useMapRegistry();
   const { app } = useApplication();
 
@@ -45,7 +45,7 @@ function BadApple() {
         rect.destroy();
       });
 
-      setPlay(false);
+      pause();
       setShow(false);
     }
 
@@ -88,7 +88,7 @@ function BadApple() {
           map.current?.addChild(rect);
         });
 
-        setPlay(true);
+        play();
 
         const frameInterval = 1000 / metadata.fps;
         let currentFrame = 0;
@@ -134,7 +134,7 @@ function BadApple() {
       isCancelled = true;
       cleanupFn();
     };
-  }, [app.ticker, map, setShow, setPlay]);
+  }, [app.ticker, map, setShow, play, pause]);
 
   return null;
 }

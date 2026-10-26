@@ -1,28 +1,57 @@
-import { createContext, PropsWithChildren, useContext, useMemo, useState } from 'react';
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 
 interface BadAppleContextValue {
-  play: boolean;
+  play: () => void;
+  pause: () => void;
   show: boolean;
-  setPlay: (val: boolean) => void;
+  registerAudio: (node: HTMLAudioElement | null) => void;
   setShow: (val: boolean) => void;
 }
 
 const BadAppleContext = createContext<BadAppleContextValue>({
-  play: false,
-  show: false,
-  setShow: (_val: boolean) => {
+  play: () => {
     // noop
   },
-  setPlay: (_val: boolean) => {
+  pause: () => {
+    // noop
+  },
+  show: false,
+  registerAudio: (_node: HTMLAudioElement | null) => {},
+
+  // noop
+  setShow: (_val: boolean) => {
     // noop
   }
 });
 
 function BadAppleProvider({ children }: PropsWithChildren<{}>) {
   const [show, setShow] = useState(false);
-  const [play, setPlay] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const value = useMemo(() => ({ show, play, setShow, setPlay }), [show, play]);
+  const registerAudio = useCallback((node: HTMLAudioElement | null) => {
+    audioRef.current = node;
+  }, []);
+
+  const play = useCallback(() => {
+    audioRef?.current?.play();
+  }, []);
+
+  const pause = useCallback(() => {
+    audioRef?.current?.pause();
+  }, []);
+
+  const value = useMemo(
+    () => ({ show, play, setShow, pause, registerAudio }),
+    [show, play, registerAudio, pause]
+  );
 
   return <BadAppleContext.Provider value={value}>{children}</BadAppleContext.Provider>;
 }
