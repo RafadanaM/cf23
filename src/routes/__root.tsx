@@ -66,11 +66,29 @@ export const Route = createRootRoute({
       },
       {
         rel: 'preload',
-        href: '/floor_map_clean.webp',
+        href: '/tile_0_clean.webp',
+        as: 'fetch',
+        crossOrigin: 'anonymous'
+      },
+      {
+        rel: 'preload',
+        href: '/tile_1_clean.webp',
         as: 'fetch',
         crossOrigin: 'anonymous'
       },
 
+      {
+        rel: 'preload',
+        href: '/tile_2_clean.webp',
+        as: 'fetch',
+        crossOrigin: 'anonymous'
+      },
+      {
+        rel: 'preload',
+        href: '/tile_3_clean.webp',
+        as: 'fetch',
+        crossOrigin: 'anonymous'
+      },
       {
         rel: 'preload',
         href: '/api/v1/circles',
